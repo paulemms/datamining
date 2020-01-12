@@ -1,0 +1,10 @@
+Package: mymining
+Type: Package
+Title: Data mining
+Version: 1.0.0
+Author: Paul Emms
+Maintainer: Paul Emms <pwemms@gmail.com>
+Description: Functions for data mining.
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
