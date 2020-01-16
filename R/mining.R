@@ -289,7 +289,6 @@ hist.hclust <- function(hc,x,k=2:5) {
   h <- hist(x,hb,freq=FALSE,col="bisque",main="",xlab="")
   top <- par("usr")[4]
   # for cutree
-  library(mva)
   for(i in 1:length(k)) {
     q <- cutree(hc,k[i])
     b <- break.cut(x,q)
@@ -349,7 +348,6 @@ break.centers <- function(x,m) {
 }
 
 break.kmeans <- function(x,n=2,plot=T) {
-  library(mva)
   km <- kmeans(x,n)
   m <- as.numeric(km$centers)
   ss <- sum(km$withinss)
@@ -504,7 +502,6 @@ plot.hclust.trace <- function(h,k=1:10) {
 
 break.ward <- function(x,n=2,plot=T) {
   h <- ward(x)
-  library(mva)
   q <- cutree(h,n)
   ss <- sum(tapply(x,q,scatter))
   if(plot) cat("sum of squares =", format(ss), "\n")
@@ -524,7 +521,6 @@ break.ward <- function(x,n=2,plot=T) {
 # "ave","centroid" are good
 # "single", "complete","median","mcq" are bad
 break.hclust <- function(x,n=2,method="ward",plot=T) {
-  library(mva)
   h <- hclust(dist(x)^2,method)
   q <- cutree(h,n)
   ss <- sum(tapply(x,q,scatter))

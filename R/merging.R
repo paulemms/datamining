@@ -1098,7 +1098,6 @@ reduce.knn <- function(object) {
 
 proto.knn <- function(object,np=1) {
   # reduce the examples to np cluster centers in each class
-  library(mva)
   train <- object$data
   resp <- response.var(object)
   pred <- predictor.vars(object)

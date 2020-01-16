@@ -76,7 +76,6 @@ reorder.svd.data.frame <- function(x,dims=c(1,2)) {
 }
 reorder.hc.data.frame <- function(x,dims=c(1,2)) {
   cat("using hclust to order\n")
-  library(mva)
   ord = list()
   if(1 %in% dims) {
     # rows

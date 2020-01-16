@@ -14,7 +14,6 @@ plot.segments.ts <- function(x,b,lwd=2,...) {
 # Apply Ward's method to find changepoints in a time-series
 break.ts <- function(x,n=2,trace=T,same.var=T,...) {
   h <- ward(as.numeric(x),sortx=F,same.var=same.var)
-  library(mva)
   q <- cutree(h,n)
   b <- break.cut(time(x),q)
   #b <- c(0,which(diff(q)>0),length(x)+1)
@@ -38,7 +37,6 @@ break.ts <- function(x,n=2,trace=T,same.var=T,...) {
 boxplot.hclust <- function(hc,x,k=2:5,col="bisque",...) {
   x <- x[hc$order]
   boxplot(x,col=col,...)
-  library(mva)
   r <- range(x)
   opar <- par(lwd=3)
   on.exit(par(opar))
@@ -54,7 +52,6 @@ boxplot.hclust <- function(hc,x,k=2:5,col="bisque",...) {
 
 # breaks a factor into nbins bins in order to preserve the prediction of x
 merge.factor <- function(f,x,n,same.var=T,trace=T,xlab=NA,ylab=NA) {
-  library(mva)
   if(is.na(xlab)) xlab <- deparse(substitute(f))
   if(is.na(ylab)) ylab <- deparse(substitute(x))
   ord <- is.ordered(f)
