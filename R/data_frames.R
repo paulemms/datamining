@@ -228,15 +228,6 @@ if(!exists("assignInNamespace")) {
     # }
   }
 }
-replaceInNamespace <- function(name,value) {
-  # if(exists("asNamespace")) {
-  #   environment(value) = environment(get(name))
-  #   assignInNamespace(name,value,environment(value))
-  #   #assignInNamespace(name,value,env=which.environment(name))
-  # } else {
-  #   assign(name,value,env=.GlobalEnv)
-  # }
-}
 
 my.aggregate.data.frame <- function(x, by, FUN, ...) {
   if(!is.data.frame(x))
