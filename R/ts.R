@@ -14,13 +14,13 @@ plot.segments.ts <- function(x,b,lwd=2,...) {
 
 
 #' Change-point analysis by clustering
-#' 
+#'
 #' Divide a time-series into homogenous segments.
-#' 
+#'
 #' Calls \code{\link{ward}} with \code{sortx=F} to cluster the series into
 #' segments.  Only the marginal distribution of data is used; temporal
 #' smoothness, for example, is ignored.
-#' 
+#'
 #' @param x a numerical vector or \code{ts} object
 #' @param n the desired number of segments
 #' @param trace If TRUE, shows a merging trace via
@@ -31,25 +31,24 @@ plot.segments.ts <- function(x,b,lwd=2,...) {
 #' @author Tom Minka
 #' @seealso \code{\link{plot.segments.ts}}, \code{\link{plot.breaks}}
 #' @examples
-#' 
-#' library(ts)
+#'
 #' data(LakeHuron)
 #' # single major change
 #' break.ts(LakeHuron,2)
 #' # merging trace suggests n=6 is also interesting:
 #' break.ts(LakeHuron,6)
 #' # interesting oscillation
-#' 
+#'
 #' data(treering)
 #' break.ts(treering[1:500],9,same=T)
 #' break.ts(treering[1:100],7,same=T)
 #' # interesting multiscale structure
-#' 
+#'
 #' x <- c(rnorm(100),rnorm(300)*3,rnorm(200)*2)
 #' b <- break.ts(x,3,same=F)
 #' plot(x,type="l")
 #' plot.breaks(b)
-#' 
+#'
 break.ts <- function(x,n=2,trace=T,same.var=T,...) {
   h <- ward(as.numeric(x),sortx=F,same.var=same.var)
   q <- cutree(h,n)
@@ -75,10 +74,10 @@ break.ts <- function(x,n=2,trace=T,same.var=T,...) {
 
 
 #' Boxplot with hierarchical cluster breaks
-#' 
+#'
 #' A representation of a hierarchical clustering of predefined groups
-#' 
-#' 
+#'
+#'
 #' @param h an \code{hclust} object
 #' @param x the list of vectors that was clustered to produce \code{h}
 #' (typically via \code{\link{ward}})
@@ -111,12 +110,12 @@ boxplot.hclust <- function(hc,x,k=2:5,col="bisque",...) {
 
 
 #' Merge factor levels
-#' 
+#'
 #' Merges factor levels with similar response distributions (assumed normal).
-#' 
+#'
 #' Calls \code{ward(split(x,f))} to get a tree, cuts the tree, and constructs a
 #' new factor.  The tree is shown via \code{\link{boxplot.hclust}}.
-#' 
+#'
 #' @param f a factor
 #' @param x a numerical vector, same length as \code{f}
 #' @param n the desired number of factor levels
@@ -127,18 +126,18 @@ boxplot.hclust <- function(hc,x,k=2:5,col="bisque",...) {
 #' @return A new factor, same length as \code{f}, but with \code{n} levels.
 #' @author Tom Minka
 #' @examples
-#' 
+#'
 #' n <- 20
 #' x <- c(rnorm(n)+1, rnorm(n)+2, rnorm(n)*4+2)
 #' f <- gl(3,n)
 #' levels(f) <- c("a","b","c")
 #' merge.factor(f,x,2,same.var=T)
 #' merge.factor(f,x,2,same.var=F)
-#' 
+#'
 #' # an ordered factor
 #' data(va.deaths)
 #' merge.factor(va.deaths$Age,va.deaths$Rate,2)
-#' 
+#'
 merge.factor <- function(f,x,n,same.var=T,trace=T,xlab=NA,ylab=NA) {
   if(is.na(xlab)) xlab <- deparse(substitute(f))
   if(is.na(ylab)) ylab <- deparse(substitute(x))
@@ -149,7 +148,7 @@ merge.factor <- function(f,x,n,same.var=T,trace=T,xlab=NA,ylab=NA) {
   h <- ward(split(x,f),sortx=!ord,same.var=same.var)
   if(n > length(h$height)) q <- 1:(length(h$height)+1)
   else q <- cutree(h,n)
-  nam <- tapply(levels(f),q,function(x) merge.names(x,ordered=ord))
+  nam <- tapply(levels(f),q,function(x) merge.names(x,i=ord))
   of <- f
   levels(f) <- nam[q]
   if(same.var) {

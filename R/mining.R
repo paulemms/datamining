@@ -43,7 +43,7 @@ banking <- function(dx, dy, iter = 100, tolerance = 0.5)
   radians.to.angle <- 180/pi
   for(i in 1:iter) {
     distances <- sqrt(dx^2 + (ar * dy)^2)
-    orientations <- atan(ar * dy, dx)
+    orientations <- atan2(ar * dy, dx)
     avg <- (radians.to.angle * sum(orientations * distances))/
       sum(distances)
     if(abs(45 - avg) < tolerance)
@@ -69,11 +69,11 @@ banking.fcn <- function(dx,dy,asp) {
 
 
 #' Choose aspect ratio
-#' 
+#'
 #' Uses Cleveland's "banking to 45" rule to determine an optimal aspect ratio
 #' for a plot.
-#' 
-#' 
+#'
+#'
 #' @param x,y numeric vectors of coordinates defining a continuous curve, or
 #' multiple curves delimited by \code{NA}s.  Alternatively, \code{x} can be a
 #' list of two vectors.
@@ -81,11 +81,11 @@ banking.fcn <- function(dx,dy,asp) {
 #' \code{\link{plot}} or \code{\link{plot.window}}.
 #' @author Tom Minka
 #' @examples
-#' 
+#'
 #' data(lynx)
 #' plot(lynx)
 #' plot(lynx,asp=auto.aspect(time(lynx),lynx))
-#' 
+#'
 auto.aspect <- function(x,y) {
   # returns an aspect ratio in user coordinates, suitable for asp=
   # x and y are vectors
@@ -199,15 +199,15 @@ bhist.stats <- function(x,b) {
 
 
 #' Merge histogram bins
-#' 
+#'
 #' Quantize a variable by merging similar histogram bins.
-#' 
+#'
 #' The desired number of bins is achieved by successively merging the two most
 #' similar histogram bins.  The distance between bins of height (f1,f2) and
 #' width (w1,w2) is measured according to the chi-square statistic
 #' \deqn{w1*(f1-f)^2/f + w2*(f2-f)^2/f} where f is the height of the merged
 #' bin: \deqn{f = (f1*w1 + f2*w2)/(w1 + w2)}
-#' 
+#'
 #' @param x a numerical vector
 #' @param b the starting number of bins, or a vector of starting break
 #' locations. If NULL, chosen automatically by \code{\link{hist}}.
@@ -221,12 +221,12 @@ bhist.stats <- function(x,b) {
 #' the chi-square distance.
 #' @author Tom Minka
 #' @examples
-#' 
+#'
 #' x <- c(rnorm(100,-2,0.5),rnorm(100,2,0.5))
 #' b <- seq(-4,4,by=0.25)
 #' merge.hist(x,b,10)
 #' # according to the merging trace, n=5 and n=11 are most interesting.
-#' 
+#'
 #' x <- runif(1000)
 #' b <- seq(0,1,by=0.05)
 #' merge.hist(x,b,10)
@@ -234,7 +234,7 @@ bhist.stats <- function(x,b) {
 #' # because the data is uniform, there should only be one bin,
 #' # but chance deviations in density prevent this.
 #' # a multiple comparisons correction in merge.hist may fix this.
-#' 
+#'
 merge.hist <- function(x,b=NULL,n=b,trace=T) {
   ss <- c()
   bn <- NULL
@@ -284,23 +284,23 @@ merge.hist <- function(x,b=NULL,n=b,trace=T) {
 
 
 #' Histogram with confidence intervals
-#' 
+#'
 #' Same as \code{\link{hist}} except a confidence interval is drawn around each
 #' bin height.
-#' 
+#'
 #' The width of the interval for height p is sqrt(p*(1-p)/n)*exp(-1/6/p/n).
-#' 
+#'
 #' @param x a numerical vector
 #' @param b the number of bins, or a vector of break locations.  If NULL,
 #' chosen automatically by \code{\link{hist}}.
 #' @return None.
 #' @author Tom Minka
 #' @examples
-#' 
+#'
 #' x <- c(rnorm(100,-2,0.5),rnorm(100,2,0.5))
 #' b <- seq(-4,4,by=0.25)
 #' bhist(x,b)
-#' 
+#'
 bhist <- function(x,b=NULL,z=1.64,xlab="",main="") {
   bh <- bhist.stats(x,b)
   p <- bh$p; nx <- bh$nx; n <- bh$n; xm <- bh$xm; wx <- bh$wx; h <- bh$h
@@ -320,7 +320,7 @@ bhist <- function(x,b=NULL,z=1.64,xlab="",main="") {
   h$counts <- nx
   h$intensities <- f
   h$density <- f
-  plot.histogram(h,col="bisque",freq=FALSE,xlab=xlab,main=main)
+  plot(h,col="bisque",freq=FALSE,xlab=xlab,main=main)
   points(xm, f, col="blue", pch=18)
   arrows(xm, f1, xm, f2,
 	 code = 3, col = "green", angle = 75, length = .1)
@@ -366,10 +366,10 @@ plot.breaks <- function(b) {
 
 
 #' Histogram with hierarchical cluster breaks
-#' 
+#'
 #' A representation of a one-dimensional hierarchical clustering
-#' 
-#' 
+#'
+#'
 #' @param h an \code{hclust} object
 #' @param x the numerical vector that was clustered to produce \code{h}
 #' @param k a vector of the cluster cardinalities to plot
@@ -403,10 +403,10 @@ break.equal <- function(x,n=2) {
 
 
 #' Equal-count breaks of a dataset
-#' 
+#'
 #' Computes a set of breaks using the equal-count algorithm.
-#' 
-#' 
+#'
+#'
 #' @author Tom Minka
 break.quantile <- function(x,n=2,plot=F,pretty=F) {
   if(is.list(x)) {
@@ -607,13 +607,13 @@ plot.hclust.trace <- function(h,k=1:10) {
 
 
 #' Quantize by clustering
-#' 
+#'
 #' Quantize a one-dimensional variable by calling a clustering routine.
-#' 
+#'
 #' These are convenience routines which simply call the appropriate clustering
 #' routine (\code{\link{ward}}, \code{\link{hclust}}, or \code{\link{kmeans}}),
 #' convert the output to a break vector, and make plots.
-#' 
+#'
 #' @aliases break.ward break.kmeans break.hclust
 #' @param x a numerical vector
 #' @param n the desired number of bins
@@ -626,17 +626,17 @@ plot.hclust.trace <- function(h,k=1:10) {
 #' \code{\link{hist}}.
 #' @author Tom Minka
 #' @examples
-#' 
+#'
 #' x <- c(rnorm(700,-2,1.5),rnorm(300,3,0.5))
 #' break.ward(x,2)
 #' break.hclust(x,2,method="complete")
 #' break.kmeans(x,2)
-#' 
+#'
 #' x <- c(rnorm(700,-2,0.5),rnorm(1000,2.5,1.5),rnorm(500,7,0.1))
 #' break.ward(x,3)
 #' break.hclust(x,3,method="complete")
 #' break.kmeans(x,3)
-#' 
+#'
 break.ward <- function(x,n=2,plot=T) {
   h <- ward(x)
   q <- cutree(h,n)

@@ -30,7 +30,6 @@ smoothness, for example, is ignored.
 }
 \examples{
 
-library(ts)
 data(LakeHuron)
 # single major change
 break.ts(LakeHuron,2)

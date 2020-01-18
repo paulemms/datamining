@@ -374,8 +374,8 @@ color.plot.formula <- function(formula,data=parent.frame(),...) {
 #' data(iris)
 #' color.plot(iris)
 #' color.plot(Species ~ Petal.Length + Petal.Width, iris)
-#' color.plot(Species ~ Petal.Length, iris)
-#' color.plot(Species ~ Petal.Length, iris,jitter=T)
+#' #color.plot(Species ~ Petal.Length, iris)
+#' #color.plot(Species ~ Petal.Length, iris,jitter=T)
 #' color.plot(iris, col=1)
 #' color.plot(iris, col=c(1,2))
 #'
@@ -663,15 +663,15 @@ color.plot.loess <- function(object,x,res=50,fill=F,add=fill,
 
   # x is only used to get plotting range
   # this is ugly, but otherwise recursively calling color.plot.data.frame is hard
-  if(is.null(...$xlim)) {
+  if(is.null(list(...)$xlim)) {
     if(add || !fill) xlim <- range(par("usr")[1:2])
     else xlim <- range(x[[pred[1]]])
-  } else xlim <- ...$xlim
+  } else xlim <- list(...)$xlim
   x1 <- seq(xlim[1],xlim[2],length=res)
-  if(is.null(...$ylim)) {
+  if(is.null(list(...)$ylim)) {
     if(add || !fill) ylim <- range(par("usr")[3:4])
     else ylim <- range(x[[pred[2]]])
-  } else ylim <- ...$ylim
+  } else ylim <- list(...)$ylim
   x2 <- seq(ylim[1],ylim[2],length=res)
   xt <- expand.grid(x1,x2)
   names(xt) <- pred[1:2]

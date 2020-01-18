@@ -88,7 +88,7 @@ cbind.extend <- function(df,df2) {
 # returns the name of the response variable
 # works for formulas, model frames, and fitted models
 response.var <- function(object) {
-  if(is.null(object)) return(NULL)
+  if(is.null(object) || is.array(object)) return(NULL)
   if(inherits(object, "terms")) {
     a <- attributes(object)
     if(!a$response) return(character(0))
@@ -374,8 +374,8 @@ replaceInNamespace("aggregate.data.frame",my.aggregate.data.frame)
 #' data(state)
 #' state.name[make.names(state.name) != state.name]# those 10 with a space
 #'
-  make.names <- function(names, unique=F) {
-    names <- .Internal(make.names(as.character(names)))
+make.names <- function(names, unique=F) {
+    names <- .Internal(make.names(as.character(names), unique))
     # minka: change keywords
     i <- is.element(names, c("for","while","repeat","if","else","function"))
     if(any(i)) names[i] <- paste(names[i],".",sep="")

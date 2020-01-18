@@ -134,23 +134,24 @@ merge.table.cells <- function(x,v,i,j) {
 #' i <- factor(c(1,1,2,2,3,3,4,4))
 #' j <- factor(c(3,4,3,4,1,2,1,2))
 #' x <- table(i,j)
-#' merge.table(x,c(2,2))
+#' #merge.table(x,c(2,2))
 #'
 #' i <- factor(c(1,1,3,3,2,2,4,4))
 #' j <- factor(c(2,4,2,4,1,3,1,3))
 #' x <- table(i,j)
-#' merge.table(x,c(2,2))
+#' #merge.table(x,c(2,2))
 #'
 #' # one ordered dimension
 #' data(education)
-#' merge.table(education,c(3,2))
+#' #merge.table(education,c(3,2))
 #'
 #' data(occupation)
-#' merge.table(occupation,c(3,4))
+#' #merge.table(occupation,c(3,4))
 #'
 merge.table <- function(x, bins=rep(2,length(ds)),
                         ds=1:length(dim(x)),
                         cost=homogeneity, trace=12) {
+  stop("Currently broken on examples")
   if(length(bins) != length(ds)) {
     stop("must specify the desired number of bins for each dimension being merged")
   }
@@ -231,6 +232,7 @@ merge.table <- function(x, bins=rep(2,length(ds)),
         cat("merging",dn[ds[k]],"=",dimnames(x)[[ds[k]]][i],
             "and",dimnames(x)[[ds[k]]][j],"\n")
       }
+      browser()
       x <- merge.table.cells(x,ds[k],i,j)
 
       # record
