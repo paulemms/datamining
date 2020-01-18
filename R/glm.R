@@ -1151,6 +1151,63 @@ rtable <- function(object, ...) UseMethod("rtable")
 # similar to parallel.plot
 # replacement for dotchart
 # y is a named vector or matrix
+
+
+#' Linechart
+#' 
+#' Plot each data row as a curve.
+#' 
+#' If \code{xscale="linear"}, the columns are placed to make each curve as
+#' straight as possible.  If \code{xscale="equal"}, the columns are placed
+#' similar to \code{"linear"} but with the constraint that they must be equally
+#' spaced.  If \code{xscale="none"}, the columns are placed in the order that
+#' they appear in the matrix.  This is automatic if \code{y} has ordered
+#' columns (see \code{\link{dim.ordered}}).  If \code{se != NULL}, error bars
+#' are drawn around each point.
+#' 
+#' Linecharts are a replacement for dotcharts and mosaics.
+#' 
+#' @param y a named vector or matrix.
+#' @param se a vector or matrix, same size as \code{y}, of error bounds.
+#' Alternatively, \code{y} can be \code{list(y,se)}.
+#' @param effects If \code{TRUE}, the columns are shifted to have zero mean.
+#' @param med If \code{TRUE} and \code{effects=TRUE}, the columns are shifted
+#' to have zero median.
+#' @param xscale describes how the columns should be placed.
+#' @param ... additional arguments to \code{\link{labeled.curves}}.
+#' @author Tom Minka
+#' @seealso \code{\link{dotchart}}, \code{\link{mosaicplot}}
+#' @examples
+#' 
+#' # compare to a dotchart
+#' data(VADeaths)
+#' dotchart(VADeaths, main = "Death Rates in Virginia - 1940")
+#' dimOrdered(VADeaths)[2] = F
+#' linechart(VADeaths)
+#' linechart(t(VADeaths))
+#' 
+#' # compare to a mosaicplot
+#' data(HairEyeColor)
+#' x <- margin.table(HairEyeColor,c(1,2))
+#' dimOrdered(x) = F
+#' mosaicplot(x)
+#' x = t(x)
+#' col = c("brown","blue","red","green")
+#' linechart(row.probs(x),color.pal=col)
+#' linechart(row.probs(x,se=T),color.pal=col)
+#' linechart(row.probs(x,se=T),jitter=0.02,color.pal=col)
+#' mosaicplot(x)
+#' linechart(row.probs(t(x),se=T))
+#' 
+#' data(blood)
+#' dimOrdered(blood) = F
+#' linechart(row.probs(blood,se=T))
+#' 
+#' data(antacids)
+#' dimOrdered(antacids) = F
+#' linechart(row.probs(antacids,se=T))
+#' mosaicplot(t(antacids))
+#' 
 linechart <- function(y,se=NULL,xlab=NULL,ylab,effects=F,med=F,
                       xscale=c("equal","linear","none"),...) {
   if(is.list(y) && missing(se)) {
@@ -1236,6 +1293,59 @@ linechart <- function(y,se=NULL,xlab=NULL,ylab,effects=F,med=F,
   labeled.curves(x,t(y),se,xlab=xlab,ylab=ylab,...)
 }
 
+
+
+#' Plot labeled curves
+#' 
+#' Draws multiple curves, each with a properly-placed label and unique
+#' color/linestyle.
+#' 
+#' Point \code{j} in curve \code{i} is at \code{(x[j],y[j,i])}.  Thus all
+#' curves must be the same length, and have points at the same horizontal
+#' positions.  If \code{y[i,j]=NA}, then the curve has a break at the previous
+#' point, and resumes at the next \code{non-NA} point.
+#' 
+#' If \code{se} is given, then an error bar will be placed around each point.
+#' 
+#' @param x a numeric vector giving the horizontal position of each point.
+#' @param y a matrix or data frame giving the vertical position of each point.
+#' Each column defines one curve.
+#' @param se a matrix or data frame, the same size as \code{y}, giving an error
+#' bound on each value.
+#' @param labels a character vector of labels for the lines.  Defaults to the
+#' column names of \code{y}.
+#' @param xlab,ylab axis labels, by default the dimnames of \code{y}.
+#' @param type indicates whether to draw points, lines, or both.  See
+#' \code{\link{plot}}.
+#' @param group a numeric vector specifying how to group cases when assigning
+#' colors.
+#' @param color.palette a vector of colors, arbitrary length, or a function
+#' with integer argument which generates a vector of colors.  Used if
+#' \code{col} is not specified.  If shorter than the number of curves, colors
+#' will be recycled and the line style will change.
+#' @param col a vector of colors, as in a call to \code{\link{plot}}.  Used to
+#' explicitly set the color of each curve.
+#' @param lty.palette a vector of line styles, arbitrary length.  The line
+#' style will rotate through these when there aren't enough colors.
+#' @param lty a vector of line styles, as in a call to \code{\link{plot}}.
+#' Used to explicitly set the style of each curve.
+#' @param lwd line width.
+#' @param jitter the amount by which to jitter the error bars, to avoid
+#' overplotting.  \code{jitter=0.02} is usually sufficient.
+#' @param legend If \code{TRUE}, the labels are placed in a legend.  Otherwise
+#' the labels are placed next to the lines.
+#' @param cex character expansion factor.
+#' @param horizontal If \code{TRUE}, the axes are laid out horizontally, so
+#' that the curves run vertically.
+#' @param mar a numerical vector giving the lines of margin on the four sides
+#' of the plot (see \code{\link{par}}).  If missing, it is set according to
+#' \code{\link{auto.mar}}.
+#' @param bg background color.
+#' @param ylim desired plotting limits.
+#' @param main title for the plot.
+#' @param ... extra arguments for low-level plotting commands.
+#' @author Tom Minka
+#' @seealso \code{\link{parallel.plot}}
 labeled.curves <- function(x,y,se=NULL,labels,xtick=names(x),
                            xlab=NULL,ylab,type="o",
                            group,

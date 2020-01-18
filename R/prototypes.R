@@ -99,6 +99,33 @@ apply.order <- function(x,ord) {
   x
 }
 
+
+
+#' Data Image
+#' 
+#' Each value in a data matrix is represented by a colored pixel.
+#' 
+#' 
+#' @param x a matrix or data frame.
+#' @param reorder If \code{TRUE}, the rows and columns are reordered so that
+#' the data along each row and each column follows a linear trend.  Can also be
+#' a vector of two logicals, indicating separately whether to reorder rows
+#' and/or columns.
+#' @param scale If \code{TRUE}, each column is scaled to have minimum 0 and
+#' maximum 1.
+#' @param col a vector of colors to use for representing values.
+#' @param ... extra arguments to \code{\link{image.default}}.
+#' @author Tom Minka
+#' @seealso \code{\link{YR.colors}}
+#' @references M. C. Minnotte and R. W. West. "The Data Image: A Tool For
+#' Exploring High Dimensional Data Sets." Proceedings of the ASA Section on
+#' Statistical Graphics, 1998. \url{http://citeseer.nj.nec.com/72085.html}
+#' \url{http://math.usu.edu/~minnotte/research/pubs.html}
+#' @examples
+#' 
+#' data(USJudgeRatings)
+#' data.image(USJudgeRatings,col=RC.colors(32))
+#' 
 data.image <- function(x,las=1,reorder=T,scale=T,...) {
   #mar=c(2.5,8.5,0,0.1)
   x = as.data.frame(x)
@@ -637,6 +664,77 @@ my.stars <-
   function(x, full = TRUE, scale = TRUE, radius = TRUE,
            labels = dimnames(x)[[1]],
            locations = NULL, xlim = NULL, ylim = NULL, len = 1,
+
+
+#' Color schemes
+#' 
+#' Compute a color scheme with a specified number of levels.
+#' 
+#' The first two schemes are \emph{categorical}, providing maximum separation
+#' in hue, intended for depicting unordered categories.  \code{default.colors}
+#' has only dark colors, good for coloring points, while
+#' \code{default.colors.w} includes light colors, good for filling regions.
+#' 
+#' The next four schemes are \emph{sequential}, from light to dark, with
+#' variation in hue to increase discrimination.  They are intended for
+#' depicting ordered levels.  The sequential order is more easily perceived
+#' with these schemes than with the built-in palettes \code{heat.colors},
+#' \code{terrain.colors}, and \code{topo.colors}.  The ordering can also be
+#' seen by the color-blind and when printed in black and white.
+#' 
+#' The main difference between the sequential schemes is the variation in hue,
+#' with \code{YR.colors} having the most variation and \code{gray.colors}
+#' having the least.  Generally you should choose the amount of variation
+#' according to the number of levels.  I recommend \code{OrRd.colors} for three
+#' levels, \code{YlGnBu.colors} for four to eight levels, and \code{YR.colors}
+#' beyond eight levels.
+#' 
+#' The last four schemes are \emph{double-ended} or \emph{diverging} schemes,
+#' which progress from one hue to a second hue, passing through white in the
+#' middle.  They are intended for representing signed ordered levels, such as
+#' residuals.  The main difference between them is the amount of separation
+#' between colors, so generally you use \code{GM.colors} when you want a few
+#' levels and \code{RYB.colors} when you want many.
+#' 
+#' These functions can be used as the \code{color.palette} parameter to
+#' \code{\link{filled.contour}} and \code{\link{color.plot}}, for example.
+#' 
+#' @aliases default.colors default.colors.w YR.colors YlGnBu.colors OrRd.colors
+#' gray.colors RYB.colors BrBg.colors RC.colors GM.colors
+#' @param n the number of colors desired
+#' @return A vector of strings, naming colors.
+#' @author Tom Minka
+#' @seealso \code{\link{colors}},\code{\link{rainbow}},\code{\link{color.cone}}
+#' @references The schemes in \code{YlGnBu.colors}, \code{OrRd.colors},
+#' \code{RYB.colors}, and \code{BrBg.colors} are from ColorBrewer.  The scheme
+#' in \code{YR.colors} is from Howard Seltman.
+#' 
+#' Mark A. Harrower and Cynthia A. Brewer.  ColorBrewer: An Online Tool for
+#' Selecting Color Schemes for Maps, \emph{The Cartographic Journal}, in press.
+#' \url{http://www.colorbrewer.org/},
+#' \url{http://www.personal.psu.edu/faculty/c/a/cab38/ColorBrewerBeta.html}
+#' 
+#' Generalized color schemes for Mapping and Visualization.  From Cynthia
+#' Brewer, Color Use Guidelines for Mapping and Visualization.  Reprinted at
+#' the Gallery of Data Visualization by Michael Friendly.
+#' \url{http://www.math.yorku.ca/SCS/Gallery/images/S12-fullstructureClean.gif}
+#' 
+#' Dan Carr.  Color perception, the importance of gray and residuals, on a
+#' choropleth map.  \emph{Statistical Computing & Graphics Newsletter}
+#' 5(1):16-20, 1994
+#' \url{http://cm.bell-labs.com/cm/ms/who/cocteau/newsletter/issues/back/v51.pdf}
+#' @examples
+#' 
+#' data(Housing)
+#' color.plot(Price ~ Rooms + Low.Status, Housing, bg=gray(0.5),
+#'            color.palette=YlGnBu.colors)
+#' color.plot(Price ~ Rooms + Low.Status, Housing, bg=gray(0.5),
+#'            color.palette=YR.colors)
+#' color.plot(Price ~ Rooms + Low.Status, Housing, bg=gray(0.5),
+#'            color.palette=RYB.colors,nlevels=5)
+#' 
+#' # also see examples for color.cone
+#' 
            colors = NULL, abbrev=T,
            key.loc = NA, key.labels = NULL, key.xpd = TRUE,
            draw.segments = FALSE, axes = FALSE,

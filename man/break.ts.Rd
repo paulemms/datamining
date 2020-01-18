@@ -15,23 +15,21 @@ break.ts(x, n = 2, trace = T, same.var = T, ...)
 \code{\link{plot.hclust.trace}}}
 
 \item{same.var}{argument passed to \code{\link{ward}}}
-
-\item{...}{}
 }
 \value{
-A vector of time breaks. The breaks are also plotted visually via
-\code{\link{plot.segments.ts}}
+A vector of time breaks.  The breaks are also plotted visually via
+\code{\link{plot.segments.ts}}.
 }
 \description{
-Apply Ward's method to find changepoints in a time-series.
 Divide a time-series into homogenous segments.
 }
 \details{
 Calls \code{\link{ward}} with \code{sortx=F} to cluster the series into
-segments.  Only the marginal distribution of data is used;
-temporal smoothness, for example, is ignored.
+segments.  Only the marginal distribution of data is used; temporal
+smoothness, for example, is ignored.
 }
 \examples{
+
 library(ts)
 data(LakeHuron)
 # single major change
@@ -49,7 +47,11 @@ x <- c(rnorm(100),rnorm(300)*3,rnorm(200)*2)
 b <- break.ts(x,3,same=F)
 plot(x,type="l")
 plot.breaks(b)
+
 }
 \seealso{
 \code{\link{plot.segments.ts}}, \code{\link{plot.breaks}}
+}
+\author{
+Tom Minka
 }

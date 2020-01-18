@@ -1,4 +1,3 @@
-##############################################################################
 # data.frames
 
 formula.with.data <- function(fmla, data)
@@ -264,7 +263,7 @@ my.aggregate.data.frame <- function(x, by, FUN, ...) {
 }
 replaceInNamespace("aggregate.data.frame",my.aggregate.data.frame)
 
-if(!exists("make.unique")) {
+#if(!exists("make.unique")) {
   # desiderata for make.unique:
   # 1. if A is unique, make.unique(c(A,B)) preserves A
   # 2. make.unique(c(A,B)) = make.unique(c(make.unique(A),B))
@@ -272,6 +271,42 @@ if(!exists("make.unique")) {
   # internal version
   # does not satisfy desideratum #2
   # make.unique(c("a","a","a")) != make.unique(c(make.unique(c("a","a")),"a"))
+
+
+#' Make character strings unique
+#'
+#' Makes the elements of a character vector unique by appending sequence
+#' numbers to duplicates.
+#'
+#' The algorithm used by \code{make.unique} has the property that
+#' \code{make.unique(c(A,B)) = make.unique(c(make.unique(A),B))}.
+#'
+#' In other words, you can append one string at a time to a vector, making it
+#' unique each time, and get the same result as applying \code{make.unique} to
+#' all of the strings at once.
+#'
+#' If character vector \code{A} is already unique, then
+#' \code{make.unique(c(A,B))} preserves \code{A}.
+#'
+#' @param names a character vector
+#' @param sep a character string used to separate a duplicate name from its
+#' sequence number.
+#' @return a character vector of same length as \code{names} with duplicates
+#' changed.
+#' @author Thomas P Minka
+#' @seealso \code{\link{make.names}}
+#' @keywords character
+#' @examples
+#'
+#' make.unique(c("a","a","a"))
+#' make.unique(c(make.unique(c("a","a")),"a"))
+#'
+#' make.unique(c("a","a","a.2","a"))
+#' make.unique(c(make.unique(c("a","a")),"a.2","a"))
+#'
+#' rbind(data.frame(x=1),data.frame(x=2),data.frame(x=3))
+#' rbind(rbind(data.frame(x=1),data.frame(x=2)),data.frame(x=3))
+#'
   make.unique <- function(names) {
     # names is character vector
     if(!is.character(names)) stop("names must be a character vector")
@@ -307,6 +342,38 @@ if(!exists("make.unique")) {
     names
   }
 
+
+
+#' Make Syntactically Valid Names
+#'
+#' Make syntactically valid names out of character vectors.
+#'
+#' A syntactically valid name consists of letters, numbers, and the dot
+#' character and starts with a letter or the dot.
+#'
+#' All invalid characters are translated to \code{"."}.  A missing value is
+#' translated to \code{"NA"}.  Names which match R keywords have a dot appended
+#' to them.
+#'
+#' If \code{unique = TRUE} then \code{\link{make.unique}} is used to append
+#' sequence numbers to duplicates (after coercion).
+#'
+#' @param names character (vector) to be coerced to syntactically valid names.
+#' @param unique logical; if \code{TRUE}, the resulting elements are unique.
+#' This may be desired for, e.g., column names.
+#' @return A character vector of same length as \code{names} with each changed
+#' to a syntactically valid name.
+#' @seealso \code{\link{names}}, \code{\link{character}},
+#' \code{\link{data.frame}}.
+#' @keywords character
+#' @examples
+#'
+#' make.names(c("a and b", "a_and_b"), unique=TRUE)
+#' # "a.and.b"  "a.and.b1"
+#'
+#' data(state)
+#' state.name[make.names(state.name) != state.name]# those 10 with a space
+#'
   make.names <- function(names, unique=F) {
     names <- .Internal(make.names(as.character(names)))
     # minka: change keywords
@@ -316,7 +383,7 @@ if(!exists("make.unique")) {
     names
   }
   replaceInNamespace("make.names",make.names)
-}
+#}
 
 # does NOT throw an error if no terms
 terms.default <- function(x,...) x$terms
@@ -792,6 +859,39 @@ indep.fit <- function(x) {
 
 # returns top k associations in table x
 # uses sort.cells, sort.data.frame, rbind.extend
+
+
+#' Associations in a contingency table
+#'
+#' Find unusually frequent variable combinations.
+#'
+#' Enumerates all two-way marginal tables, sorts the cells by lift, and returns
+#' the top.  The formula for lift is \deqn{\frac{p(i,j)}{p(i)p(j)}}.
+#'
+#' @param x a contingency table
+#' @param top the number of top associations to return
+#' @param targets a character vector of table variables, one of which must be
+#' included in every returned association.
+#' @return A data frame where the first column is \code{Lift} and the remaining
+#' columns correspond to the variables of \code{x}. Each row describes a cell
+#' of \code{x}, where marginalized variables have value \code{NA}. The lift
+#' value describes the ratio of the actual count in the cell versus the
+#' expected count under independence.
+#' @author Tom Minka
+#' @examples
+#'
+#' data(Titanic)
+#' mine.associations(Titanic)
+#' # Females are twice as likely to survive as the average person.
+#' # Members of 3rd class are twice as likely to be children as the average person.
+#' # Etc.
+#'
+#' # focus on associations with survival
+#' mine.associations(Titanic,target="Survived")
+#'
+#' # focus on children
+#' mine.associations(Titanic[,,1,],target="Survived")
+#'
 mine.associations <- function(x,top=10,targets=NULL,z=1) {
   if(!inherits(x,"class")) x <- as.table(x)
   dm <- dim(x)

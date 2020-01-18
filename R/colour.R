@@ -98,6 +98,37 @@ darker <- function(col,scale=0.8) {
 #plot(y,pch=21,bg=hsv(6/12,1,1))
 
 
+
+
+#' Add a thin key to the top of a plot
+#'
+#' Similar to \code{\link{legend}} but takes up less space.
+#'
+#'
+#' @param col a vector of colors, one for each group.  Assumed black if none
+#' given.
+#' @param pch a vector of symbols, one for each group.  If less than two
+#' distinct symbols are given, no symbols are put in the key.
+#' @param labels a character vector giving the label of each group.
+#' @param breaks a numeric vector of boundaries between groups.
+#' @param digits number of digits to use for \code{breaks}.
+#' @param cex character expansion factor.
+#' @return A thin bar is placed at the top of the plot, just inside the
+#' plotting area.  The bar is divided into equal-sized lengths, colored
+#' according to \code{col}.  If \code{pch} is given, that symbol is plotted in
+#' the center of each segment.  If \code{labels} is given, each label is placed
+#' at the center of the corresponding segment, just above the plotting area
+#' (using \code{\link{mtext}}).  If \code{breaks} is given, the boundary
+#' between segments is also labeled with a number.
+#' @author Tom Minka
+#' @seealso \code{\link{color.plot}}
+#' @examples
+#'
+#' data(iris)
+#' y = as.numeric(iris$Species)
+#' plot(Sepal.Width ~ Sepal.Length, iris,col=y,pch=y)
+#' color.key(1:3,1:3,levels(iris$Species))
+#'
 color.key <- function(col=NULL,pch=NULL,labels=NULL,breaks=NULL,digits=2,cex=0.75*par("cex")) {
   # don't draw symbols in the key if there is only one type
   if(length(unique(pch)) == 1) pch <- NULL
@@ -241,6 +272,69 @@ sequential.pch <- c(20,41,4,1,38,35,11,19)
 # use for printing
 sequential.pch.paper <- c(45,41,4,1,38,35,11,19)
 
+
+
+#' Plot subgroups as colored points
+#'
+#' Like \code{\link{plot}} and \code{\link{text.plot}} but colors according to
+#' a third variable.
+#'
+#' Each (x,y) point is plotted with a color determined by \code{z}.  If
+#' \code{z} is a factor, each factor level is in a different color.  If
+#' \code{z} is numeric, then it is color-coded by assigning each quantile a
+#' different color.
+#'
+#' Despite the name, this function can also make plots using different symbols
+#' instead of colors.  For example, if \code{color.palette=1} then all points
+#' will be black but use different symbols.
+#'
+#' When \code{labels != NULL}, the result is equivalent to
+#' \code{\link{text.plot}} with colors.
+#'
+#' If \code{key=TRUE} and there is more than one color or symbol on the plot, a
+#' key is displayed at the top of the figure.
+#'
+#' @aliases color.plot color.plot.default
+#' @param x,y numeric vectors of the same length.
+#' @param z a numeric vector or factor, same length as \code{x} and \code{y}.
+#' @param labels a character vector of labels, same length as \code{z}.  If
+#' NULL, cases are plotted as points (default).
+#' @param axes If FALSE, no axes are plotted (but there may still be a key).
+#' @param key If FALSE, no key is plotted.
+#' @param add If FALSE, a new plot is made.  If TRUE, points or labels are
+#' added to the existing plot.
+#' @param nlevels an integer.  If \code{z} is numeric, it is color-coded using
+#' this many levels.  (If \code{z} is a factor, color-coding follows the factor
+#' levels.)
+#' @param color.palette a vector of colors, arbitrary length, or a function
+#' with integer argument which generates a vector of colors (e.g.
+#' \code{\link{YlGnBu.colors}}).  Used if \code{col} is not specified.  If
+#' shorter than the number of levels, colors will be recycled and the plotting
+#' symbol will change.
+#' @param col a vector of colors, as in a call to \code{\link{plot}}.  Used to
+#' explicitly set the color of each point.
+#' @param pch.palette a vector of plotting symbols, arbitrary length.  If
+#' \code{labels=NULL}, the plot symbol will rotate through these when there
+#' aren't enough colors.
+#' @param pch a vector of plotting symbols, as in a call to \code{\link{plot}}.
+#' Used to explicitly set the symbol of each point.
+#' @param digits the number of digits to use in the color key when \code{z} is
+#' numeric.
+#' @param bg the background color
+#' @param mar figure margins (see \code{par}).  If not specified, appropriate
+#' margins will be chosen automatically, which will not necessarily match the
+#' current value of \code{par("mar")}.
+#' @return A plot is produced.
+#' @note This function sets the figure margins permanently, so that you can
+#' draw on the color plot.  Unfortunately, this also means future plots will
+#' use the same margins, until you change them with \code{par("mar")}.
+#' @author Tom Minka
+#' @seealso
+#' \code{\link{color.plot.data.frame}},\code{\link{color.plot.loess}},\code{\link{color.plot.glm}},\code{\link{color.plot.knn}},\code{\link{color.plot.tree}},\code{\link{YlGnBu.colors}}
+#' @examples
+#'
+#' # See the examples for color.plot.data.frame
+#'
 color.plot <- function(object, ...) UseMethod("color.plot")
 color.plot.formula <- function(formula,data=parent.frame(),...) {
   x <- model.frame.default(formula,data,na.action=na.pass)
@@ -248,6 +342,47 @@ color.plot.formula <- function(formula,data=parent.frame(),...) {
   x = cbind(x[-1],x[1])
   color.plot.data.frame(x,...)
 }
+
+
+#' Plot cases as colored points
+#'
+#' Like \code{\link{plot}} and \code{\link{text.plot}} but colors according to
+#' the response variable.
+#'
+#' Calls \code{\link{color.plot.default}} with \code{x} as the first predictor
+#' in \code{data}, \code{y} as the second predictor, and \code{z} as the
+#' response.  To get a different predictor/response breakdown than the default,
+#' use \code{color.plot(formula, x, ...)}, which is shorthand for
+#' \code{color.plot(model.frame(formula, x), ...)}.
+#'
+#' Each case is plotted with a color determined by the response.  If the
+#' response is a factor, each factor level is in a different color.  If the
+#' response is numeric, then it is color-coded by assigning each quantile a
+#' different color.
+#'
+#' @aliases color.plot.data.frame color.plot.formula
+#' @param data a data frame.
+#' @param formula a formula specifying a response and two predictors from
+#' \code{data}
+#' @param labels If NULL, cases are plotted as points.  If T, cases are plotted
+#' as labels, according to \code{rownames}.
+#' @param ... Extra arguments passed to \code{\link{color.plot.default}}.
+#' @author Tom Minka
+#' @seealso \code{\link{color.plot.default}}
+#' @examples
+#'
+#' data(iris)
+#' color.plot(iris)
+#' color.plot(Species ~ Petal.Length + Petal.Width, iris)
+#' color.plot(Species ~ Petal.Length, iris)
+#' color.plot(Species ~ Petal.Length, iris,jitter=T)
+#' color.plot(iris, col=1)
+#' color.plot(iris, col=c(1,2))
+#'
+#' data(state)
+#' x <- data.frame(state.x77)
+#' color.plot(Murder ~ Frost + Illiteracy, x, labels=T, cex=0.5)
+#'
 color.plot.data.frame <- function(x,z,zlab=NULL,xlab=NULL,ylab=NULL,labels=F,...) {
   if(missing(z)) {
     pred <- predictor.terms(x)
@@ -481,6 +616,36 @@ text.plot.default <- function(x,y,labels=NULL,xlab,ylab,xlim=NULL,ylim=NULL,
 }
 # test: text.plot(runif(10),runif(10),rep("a",10))
 
+
+
+#' Contour plot of a regression surface
+#'
+#'
+#' The regression surface is evaluated at all points on a grid, clipped values
+#' are set to \code{NA}, and \code{contour.plot} is used to plot the contours.
+#'
+#' If \code{add=FALSE}, the data is plotted on top using
+#' \code{color.plot.data.frame}.
+#'
+#' @param object a \code{\link{loess}} object.
+#' @param data data to use instead of \code{model.frame(object)}.
+#' @param res resolution of the sampling grid in each direction.
+#' @param fill passed to \code{\link{contour.plot}}.
+#' @param add If \code{TRUE}, the contours are added to an existing plot.
+#' Otherwise a new plot is created.
+#' @param clip a polygon over which the surface is to be defined.  Possible
+#' values are \code{FALSE} (no clipping), \code{TRUE} (clip to the convex hull
+#' of the data), or a matrix with two columns specifying (x,y) coordinates.
+#' @param ... extra arguments to \code{\link{color.plot.data.frame}}
+#' @return A plot is produced.
+#' @author Tom Minka
+#' @seealso \code{\link{contour.plot}}
+#' @examples
+#'
+#' data(Housing)
+#' fit = loess(Price ~ Rooms + Low.Status, Housing)
+#' color.plot(fit)
+#'
 color.plot.loess <- function(object,x,res=50,fill=F,add=fill,
                              clip=T,xlab=NULL,ylab=NULL,zlab=NULL, ...) {
   if(missing(x)) x <- model.frame(object)
@@ -524,6 +689,49 @@ color.plot.loess <- function(object,x,res=50,fill=F,add=fill,
   if(!add && fill) color.plot.data.frame(x,col=1,add=T,...)
 }
 
+
+
+#' Display contours
+#'
+#' Create a filled or unfilled contour plot.
+#'
+#' This is a wrapper function for \code{\link{contour}} and
+#' \code{\link{filled.contour}} whose main purpose is to provide a uniform
+#' interface and provide a decent automatic choice of levels.
+#'
+#' If \code{equal=FALSE}, the levels are chosen according to the equal-count
+#' algorithm of \code{\link{break.quantile}}.
+#'
+#' @param x,y locations at which the values in \code{z} are measured.
+#' @param z a matrix containing the values to be plotted (NAs are allowed).
+#' @param fill If \code{TRUE}, makes a filled contour plot.
+#' @param levels numeric vector of levels at which to draw contour lines.  The
+#' next few arguments only apply to the case when \code{levels==NULL}.
+#' @param nlevels The number of contour lines to draw.
+#' @param level.data numeric vector to use for computing \code{levels}.
+#' @param zlim The range that the levels should cover.  Defaults to the range
+#' of \code{level.data}.
+#' @param equal If \code{TRUE}, the levels are equally spaced over \code{zlim}.
+#' Otherwise they match the quantiles of \code{level.data}.
+#' @param pretty If \code{TRUE}, the levels are chosen to be round numbers.
+#' @param lwd width of the contour lines.
+#' @param drawlabels If \code{TRUE}, the contour lines are labeled with their
+#' level.
+#' @param color.palette a vector of colors, or a function which takes a number
+#' and returns a vector of that length.
+#' @param bg the background color.
+#' @param key If \code{TRUE}, a color key is drawn at the top of the plot.  If
+#' \code{key==2}, the key of \code{filled.contour} is used.
+#' @param main the title of the plot.
+#' @param ... extra arguments passed to \code{contour} or
+#' \code{filled.contour}.
+#' @author Tom Minka
+#' @seealso \code{\link{contour}},\code{\link{filled.contour}},
+#' \code{\link{color.plot.loess}}
+#' @examples
+#'
+#' # see the examples for color.plot.loess
+#'
 contour.plot <- function(x,y,z,fill=F,
                          levels=NULL,nlevels=if(is.null(levels)) 4 else length(levels),
                          level.data=z,

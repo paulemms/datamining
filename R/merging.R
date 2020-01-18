@@ -30,6 +30,15 @@ js.divergence <- function(n1,n2) {
 }
 
 # returns a matrix of merging costs for the values along dimension v
+
+
+#' Internal routines
+#' 
+#' Internal routines for \code{\link{merge.table}}
+#' 
+#' 
+#' @aliases merge.table.cost merge.table.cost.inorder merge.table.cells
+#' @author Tom Minka
 merge.table.cost <- function(x,v,cost=homogeneity) {
   ordered <- dimOrdered(x)[[v]]
   # make v the first dimension
@@ -95,6 +104,53 @@ merge.table.cells <- function(x,v,i,j) {
 # if trees are desired, returns list(table=x,trees=t)
 # x is the merged table
 # t is a list of length(ds) trees, or one tree if length(ds)==1
+
+
+#' Table merging
+#' 
+#' Merges similar rows and columns of a contingency table.
+#' 
+#' The desired table dimensions are achieved by successively merging the two
+#' most similar slices. (`Slice' generalizes `row' and `column' to
+#' higher-dimensional tables.) The distance between slices is measured
+#' according to the chi-square statistic. Merging two slices means adding
+#' together their counts, and concatenating their labels with a comma in
+#' between. If a dimension is ordered (according to \code{\link{dim.ordered}}),
+#' only adjacent slices are considered for merging, and their labels are
+#' concatenated with a dash in between.
+#' 
+#' @param x a \code{\link{table}}
+#' @param bins the desired number of levels for each dimension being merged. a
+#' numeric vector, the same length as \code{ds}.
+#' @param ds a vector of dimensions to merge, either by name or number. default
+#' is all of them.
+#' @return A merged \code{\link{table}}.  The total count is the same as
+#' \code{x}. A merging trace is plotted which shows, for each merge, the
+#' chi-square distance of the slices which were merged. This is useful for
+#' determining the appropriate dimensions.  An interesting number is one that
+#' directly precedes a sudden jump in the chi-square distance.
+#' @author Tom Minka
+#' @seealso \code{\link{sort.table}}, \code{\link{mosaicplot}},
+#' \code{\link{linechart}}
+#' @examples
+#' 
+#' i <- factor(c(1,1,2,2,3,3,4,4))
+#' j <- factor(c(3,4,3,4,1,2,1,2))
+#' x <- table(i,j)
+#' merge.table(x,c(2,2))
+#' 
+#' i <- factor(c(1,1,3,3,2,2,4,4))
+#' j <- factor(c(2,4,2,4,1,3,1,3))
+#' x <- table(i,j)
+#' merge.table(x,c(2,2))
+#' 
+#' # one ordered dimension
+#' data(education)
+#' merge.table(education,c(3,2))
+#' 
+#' data(occupation)
+#' merge.table(occupation,c(3,4))
+#' 
 merge.table <- function(x, bins=rep(2,length(ds)),
                         ds=1:length(dim(x)),
                         cost=homogeneity, trace=12) {

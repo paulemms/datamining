@@ -11,28 +11,27 @@ plot.segments.ts <- function(x,b,lwd=2,...) {
 }
 
 
+
+
 #' Change-point analysis by clustering
-#'
-#' Apply Ward's method to find changepoints in a time-series.
+#' 
 #' Divide a time-series into homogenous segments.
-#' @details
+#' 
 #' Calls \code{\link{ward}} with \code{sortx=F} to cluster the series into
-#' segments.  Only the marginal distribution of data is used;
-#' temporal smoothness, for example, is ignored.
+#' segments.  Only the marginal distribution of data is used; temporal
+#' smoothness, for example, is ignored.
+#' 
 #' @param x a numerical vector or \code{ts} object
 #' @param n the desired number of segments
 #' @param trace If TRUE, shows a merging trace via
-#'  \code{\link{plot.hclust.trace}}
+#' \code{\link{plot.hclust.trace}}
 #' @param same.var argument passed to \code{\link{ward}}
-#' @param ...
-#'
-#' @return A vector of time breaks. The breaks are also plotted visually via
-#' \code{\link{plot.segments.ts}}
-#' @seealso
-#'  \code{\link{plot.segments.ts}}, \code{\link{plot.breaks}}
-#' @export
-#'
+#' @return A vector of time breaks.  The breaks are also plotted visually via
+#' \code{\link{plot.segments.ts}}.
+#' @author Tom Minka
+#' @seealso \code{\link{plot.segments.ts}}, \code{\link{plot.breaks}}
 #' @examples
+#' 
 #' library(ts)
 #' data(LakeHuron)
 #' # single major change
@@ -40,16 +39,17 @@ plot.segments.ts <- function(x,b,lwd=2,...) {
 #' # merging trace suggests n=6 is also interesting:
 #' break.ts(LakeHuron,6)
 #' # interesting oscillation
-#'
+#' 
 #' data(treering)
 #' break.ts(treering[1:500],9,same=T)
 #' break.ts(treering[1:100],7,same=T)
 #' # interesting multiscale structure
-#'
+#' 
 #' x <- c(rnorm(100),rnorm(300)*3,rnorm(200)*2)
 #' b <- break.ts(x,3,same=F)
 #' plot(x,type="l")
 #' plot.breaks(b)
+#' 
 break.ts <- function(x,n=2,trace=T,same.var=T,...) {
   h <- ward(as.numeric(x),sortx=F,same.var=same.var)
   q <- cutree(h,n)
@@ -72,6 +72,25 @@ break.ts <- function(x,n=2,trace=T,same.var=T,...) {
 
 #############################################################################
 
+
+
+#' Boxplot with hierarchical cluster breaks
+#' 
+#' A representation of a hierarchical clustering of predefined groups
+#' 
+#' 
+#' @param h an \code{hclust} object
+#' @param x the list of vectors that was clustered to produce \code{h}
+#' (typically via \code{\link{ward}})
+#' @param k a vector of the cluster cardinalities to plot
+#' @param ... arguments passed to \code{boxplot}
+#' @return A boxplot of \code{x} is shown with blue lines cutting the x-axis.
+#' The tallest lines correspond to divisions made at the top of the hierarchy.
+#' By reading top to bottom, you can see how each cluster is subdivided. This
+#' can be far more illuminating than a plot of the hierarchy as a tree.
+#' @author Tom Minka
+#' @seealso \code{\link{hist.hclust}}, \code{\link{ward}},
+#' \code{\link{break.ward}}
 boxplot.hclust <- function(hc,x,k=2:5,col="bisque",...) {
   x <- x[hc$order]
   boxplot(x,col=col,...)
@@ -89,6 +108,37 @@ boxplot.hclust <- function(hc,x,k=2:5,col="bisque",...) {
 }
 
 # breaks a factor into nbins bins in order to preserve the prediction of x
+
+
+#' Merge factor levels
+#' 
+#' Merges factor levels with similar response distributions (assumed normal).
+#' 
+#' Calls \code{ward(split(x,f))} to get a tree, cuts the tree, and constructs a
+#' new factor.  The tree is shown via \code{\link{boxplot.hclust}}.
+#' 
+#' @param f a factor
+#' @param x a numerical vector, same length as \code{f}
+#' @param n the desired number of factor levels
+#' @param same.var argument passed to \code{\link{ward}}
+#' @param trace If TRUE, a merging trace is plotted
+#' (\code{\link{plot.hclust.trace}})
+#' @param xlab,ylab axis labels.  If NA, taken from f and x arguments.
+#' @return A new factor, same length as \code{f}, but with \code{n} levels.
+#' @author Tom Minka
+#' @examples
+#' 
+#' n <- 20
+#' x <- c(rnorm(n)+1, rnorm(n)+2, rnorm(n)*4+2)
+#' f <- gl(3,n)
+#' levels(f) <- c("a","b","c")
+#' merge.factor(f,x,2,same.var=T)
+#' merge.factor(f,x,2,same.var=F)
+#' 
+#' # an ordered factor
+#' data(va.deaths)
+#' merge.factor(va.deaths$Age,va.deaths$Rate,2)
+#' 
 merge.factor <- function(f,x,n,same.var=T,trace=T,xlab=NA,ylab=NA) {
   if(is.na(xlab)) xlab <- deparse(substitute(f))
   if(is.na(ylab)) ylab <- deparse(substitute(x))

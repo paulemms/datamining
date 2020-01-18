@@ -636,6 +636,38 @@ vrml.cone.grid <- function() {
       "color Color { color [",t(vrml.color(col)),"]\n}",
       "coordIndex [",t(index),"]\n}}\n",file=vrml.file)
 }
+
+
+#' Depict colors geometrically
+#' 
+#' Plots named colors as points in a three-dimensional cone.
+#' 
+#' The colors are mapped into Hue-Saturation-Lightness (HSL).  Hue gives the
+#' angle around the cone, Saturation the radial distance from the center line,
+#' and Lightness the height from the base of the cone.
+#' 
+#' @param col a vector of strings, naming colors.
+#' @param cex a number controlling the size of the points.
+#' @param light If \code{TRUE}, the cone will be surrounded by point light
+#' sources.
+#' @return Produces a VRML file which is opened by a VRML viewer.
+#' @note The high-lightness, high-saturation part of the cone will always be
+#' empty, because these colors are not achievable on computer displays (due to
+#' the RGB representation).
+#' @author Tom Minka
+#' @references Rich Franzen's Wheel of Saturation, Intensity, and Hue.
+#' \url{http://home.att.net/~rocq/SIHwheel.html}
+#' 
+#' Charles Poynton's Color FAQ.
+#' \url{http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html}
+#' @examples
+#' 
+#' color.cone(YlGnBu.colors(8))
+#' color.cone(YR.colors(16))
+#' color.cone(RYB.colors(7))
+#' color.cone(topo.colors(20))
+#' # reveals how topo.colors is not sequential in lightness
+#' 
 color.cone <- function(col,cex=2,light=T,...) {
   # convert to HSY
   h = col2hsv(col)
