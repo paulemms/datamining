@@ -85,10 +85,20 @@ cbind.extend <- function(df,df2) {
   r
 }
 
-# returns the name of the response variable
-# works for formulas, model frames, and fitted models
+
+#' Get response variable
+#'
+#' This works for
+#' @param object formula, model frame, ot fitted model
+#'
+#' @return the name of the response variable
+#' @export
+#'
+#' @examples
+#' response.var(a ~ b + c)
 response.var <- function(object) {
   if(is.null(object) || is.array(object)) return(NULL)
+  if(class(object) == "formula") return(all.vars(update(object, . ~ NULL))[1])
   if(inherits(object, "terms")) {
     a <- attributes(object)
     if(!a$response) return(character(0))
