@@ -1154,9 +1154,9 @@ rtable <- function(object, ...) UseMethod("rtable")
 
 
 #' Linechart
-#' 
+#'
 #' Plot each data row as a curve.
-#' 
+#'
 #' If \code{xscale="linear"}, the columns are placed to make each curve as
 #' straight as possible.  If \code{xscale="equal"}, the columns are placed
 #' similar to \code{"linear"} but with the constraint that they must be equally
@@ -1164,9 +1164,9 @@ rtable <- function(object, ...) UseMethod("rtable")
 #' they appear in the matrix.  This is automatic if \code{y} has ordered
 #' columns (see \code{\link{dim.ordered}}).  If \code{se != NULL}, error bars
 #' are drawn around each point.
-#' 
+#'
 #' Linecharts are a replacement for dotcharts and mosaics.
-#' 
+#'
 #' @param y a named vector or matrix.
 #' @param se a vector or matrix, same size as \code{y}, of error bounds.
 #' Alternatively, \code{y} can be \code{list(y,se)}.
@@ -1178,36 +1178,36 @@ rtable <- function(object, ...) UseMethod("rtable")
 #' @author Tom Minka
 #' @seealso \code{\link{dotchart}}, \code{\link{mosaicplot}}
 #' @examples
-#' 
+#'
 #' # compare to a dotchart
 #' data(VADeaths)
 #' dotchart(VADeaths, main = "Death Rates in Virginia - 1940")
 #' dimOrdered(VADeaths)[2] = F
 #' linechart(VADeaths)
 #' linechart(t(VADeaths))
-#' 
+#'
 #' # compare to a mosaicplot
 #' data(HairEyeColor)
 #' x <- margin.table(HairEyeColor,c(1,2))
 #' dimOrdered(x) = F
-#' mosaicplot(x)
+#' # mosaicplot(x)
 #' x = t(x)
 #' col = c("brown","blue","red","green")
 #' linechart(row.probs(x),color.pal=col)
 #' linechart(row.probs(x,se=T),color.pal=col)
 #' linechart(row.probs(x,se=T),jitter=0.02,color.pal=col)
-#' mosaicplot(x)
+#' # mosaicplot(x)
 #' linechart(row.probs(t(x),se=T))
-#' 
+#'
 #' data(blood)
 #' dimOrdered(blood) = F
 #' linechart(row.probs(blood,se=T))
-#' 
+#'
 #' data(antacids)
 #' dimOrdered(antacids) = F
 #' linechart(row.probs(antacids,se=T))
-#' mosaicplot(t(antacids))
-#' 
+#' # mosaicplot(t(antacids))
+#'
 linechart <- function(y,se=NULL,xlab=NULL,ylab,effects=F,med=F,
                       xscale=c("equal","linear","none"),...) {
   if(is.list(y) && missing(se)) {
@@ -1296,17 +1296,17 @@ linechart <- function(y,se=NULL,xlab=NULL,ylab,effects=F,med=F,
 
 
 #' Plot labeled curves
-#' 
+#'
 #' Draws multiple curves, each with a properly-placed label and unique
 #' color/linestyle.
-#' 
+#'
 #' Point \code{j} in curve \code{i} is at \code{(x[j],y[j,i])}.  Thus all
 #' curves must be the same length, and have points at the same horizontal
 #' positions.  If \code{y[i,j]=NA}, then the curve has a break at the previous
 #' point, and resumes at the next \code{non-NA} point.
-#' 
+#'
 #' If \code{se} is given, then an error bar will be placed around each point.
-#' 
+#'
 #' @param x a numeric vector giving the horizontal position of each point.
 #' @param y a matrix or data frame giving the vertical position of each point.
 #' Each column defines one curve.

@@ -2,12 +2,12 @@ Package: datamining
 Type: Package
 Title: Data mining
 Version: 1.0.0
-Author: Paul Emms
+Author: Paul Emms, Thomas Minka
 Maintainer: Paul Emms <pwemms@gmail.com>
-Description: Functions for data mining.
+Description: This is a packaged collection of R functions for data mining originally developed by Thomas Minka for teaching at CMU.
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 Suggests: 
     testthat (>= 2.1.0)

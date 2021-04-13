@@ -335,7 +335,9 @@ sequential.pch.paper <- c(45,41,4,1,38,35,11,19)
 #'
 #' # See the examples for color.plot.data.frame
 #'
+#' @export
 color.plot <- function(object, ...) UseMethod("color.plot")
+#' @export
 color.plot.formula <- function(formula,data=parent.frame(),...) {
   x <- model.frame.default(formula,data,na.action=na.pass)
   # put response at end (my preferred ordering)
@@ -383,6 +385,7 @@ color.plot.formula <- function(formula,data=parent.frame(),...) {
 #' x <- data.frame(state.x77)
 #' color.plot(Murder ~ Frost + Illiteracy, x, labels=T, cex=0.5)
 #'
+#' @export
 color.plot.data.frame <- function(x,z,zlab=NULL,xlab=NULL,ylab=NULL,labels=F,...) {
   if(missing(z)) {
     pred <- predictor.terms(x)
@@ -646,6 +649,7 @@ text.plot.default <- function(x,y,labels=NULL,xlab,ylab,xlim=NULL,ylim=NULL,
 #' fit = loess(Price ~ Rooms + Low.Status, Housing)
 #' color.plot(fit)
 #'
+#' @export
 color.plot.loess <- function(object,x,res=50,fill=F,add=fill,
                              clip=T,xlab=NULL,ylab=NULL,zlab=NULL, ...) {
   if(missing(x)) x <- model.frame(object)
