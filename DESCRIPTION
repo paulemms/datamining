@@ -4,7 +4,7 @@ Title: Data mining
 Version: 1.0.0
 Author: Paul Emms, Thomas Minka
 Maintainer: Paul Emms <pwemms@gmail.com>
-Description: This is a packaged collection of R functions for data mining originally developed by Thomas Minka for teaching at CMU.
+Description: Collection of R functions for data mining.
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
