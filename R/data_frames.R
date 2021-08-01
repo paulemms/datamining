@@ -876,7 +876,7 @@ indep.fit <- function(x) {
 #' Find unusually frequent variable combinations.
 #'
 #' Enumerates all two-way marginal tables, sorts the cells by lift, and returns
-#' the top.  The formula for lift is \deqn{\frac{p(i,j)}{p(i)p(j)}}.
+#' the top.  The formula for lift is \deqn{\frac{p(i,j)}{p(i)p(j)}}
 #'
 #' @param x a contingency table
 #' @param top the number of top associations to return

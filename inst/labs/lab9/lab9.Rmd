@@ -1,0 +1,134 @@
+---
+title: 'Lab 9: Linear Regression'
+output: html_notebook
+---
+
+# Introduction
+
+This is Lab 9 on Data Mining. It is a simple introduction to the practicalities of linear regression.
+
+First we load the `datamining` package and the data for the lab.
+```{r}
+devtools::load_all()
+load('lab9.rda')
+```
+
+# The dataset
+
+The dataset is 196 weeks of grocery sales for a store. The variables are:
+
+| Variable | Description |
+| --- | --- |
+| Price.1 | DOLE PINEAPPLE ORANG 64 OZ |
+| Price.2 | FIVE ALIVE CTRUS BEV 64 OZ
+| Price.3 | HH FRUIT PUNCH 64 OZ
+| Price.4 | HH ORANGE JUICE 64 OZ
+| Price.5 | MIN MAID O J CALCIUM 64 OZ
+| Price.6 | MIN MAID O J PLASTIC 96 OZ
+| Price.7 |  MM PULP FREE OJ 64 OZ
+| Price.8 | SUNNY DELIGHT FLA CI 64 OZ
+| Price.9 | TREE FRESH O J REG 64 OZ
+| Price.10 | TROP PURE PRM HOMEST 64 OZ
+| Price.l1 | TROP SB HOMESTYLE OJ 64 OZ
+| Sold.4 | Number of units sold for HH ORANGE JUICE 64 OZ
+
+It is stored in a matrix $x$. Look at the first few rows via x[1:3,].
+
+```{r view_x}
+head(x)
+```
+
+
+# Standardizing
+
+Transform `Sold.4` appropriately and standardize all variables to have zero mean and unit variance.
+
+```{r standardizing}
+xx <- x
+hist(xx$Sold.4)
+xx$Sold.4 <- log(xx$Sold.4)
+xx <- as.data.frame(scale(xx))
+hist(xx$Sold.4)
+```
+
+# Adding predictors
+
+Construct a linear model to predict `Sold.4` as a function of Price.
+
+
+```{r}
+fit <- lm(Sold.4 ~ ., data=xx)
+summary(fit)
+```
+
+Plot all variables versus the residuals of this model. Which other variables appear important to `so1d.4`? There should be about four.
+
+```{r all_residuals}
+predict_plot(fit, x)
+```
+The important predictors appear to be `Price.4`, `Price.5`, `Price.7` and `Price.11`.
+
+Pick one of the important predictors from the last step and include it in a new model.
+
+```{r fit_price_4}
+fit_4 <- lm(Sold.4 ~ Price.4, data=xx)
+summary(fit_4)
+```
+
+```{r fit_4_residuals}
+predict_plot(fit_4, x)
+```
+
+
+In light of the new model, which other variables are important? Have any ceased to be important, or become more important, due to the change?
+
+The same predictors as before seem important with `Price.11` the most important.
+
+Add another important predictor and answer the same questions.
+
+We add `Price.11` to the model.
+
+```{r fit_price_4_11}
+fit_4_11 <- lm(Sold.4 ~ Price.4 + Price.11, data=xx)
+summary(fit_4_11)
+```
+
+```{r fit_4_11_residuals}
+predict_plot(fit_4_11, x)
+```
+
+Keep adding predictors until no more predictors seem useful. Report your final model, with the predictors in the order that you added them.
+
+```{r fit_price_4_11_5_7}
+fit_4_11_5_7 <- lm(Sold.4 ~ Price.4 + Price.11 + Price.5 + Price.7, data=xx)
+summary(fit_4_11_5_7)
+```
+
+# Automatic selection
+
+Starting again from a model with only `Price.4`, use step to add predictors. Save the coefficients of the fit. How is the resulting model different from the one you constructed?
+
+```{r step}
+fit_step <- step(fit_4, formula(xx))
+```
+
+The automatically generated model is the same as that generated manually.
+
+Make a partial residual plot for the model from step.
+
+```{r partial_plots}
+predict_plot(fit_step, partial=TRUE)
+```
+
+Residual and partial residual plots are also available in the function 
+`termplot` in the `stats` package.
+
+```{r termplot}
+library(stats)
+par(mfrow = c(2, 2))
+termplot(fit_step, partial.resid = TRUE, ask = FALSE)
+par(mfrow = c(1, 1))
+```
+Note that the partial residuals for `Sold.4` are shown
+using `predict_plot` whereas `termplot` uses the partial residuals for each predictor on the vertical
+axis.

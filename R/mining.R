@@ -288,7 +288,8 @@ merge.hist <- function(x,b=NULL,n=b,trace=T) {
 #' Same as \code{\link{hist}} except a confidence interval is drawn around each
 #' bin height.
 #'
-#' The width of the interval for height p is sqrt(p*(1-p)/n)*exp(-1/6/p/n).
+#' The width of the interval for height p is
+#' \code{sqrt(p*(1-p)/n)*exp(-1/6/p/n)}.
 #'
 #' @param x a numerical vector
 #' @param b the number of bins, or a vector of break locations.  If NULL,

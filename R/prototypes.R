@@ -244,6 +244,65 @@ parallel.cases <- function(x,yscale=c("linear","range","none"),
   i
 }
 
+#' Parallel-coordinate plot
+#'
+#' @description Plots a data matrix using parallel coordinates.
+#' @param x a data matrix or frame.  Only numeric columns will be
+#'     plotted.
+#' @param yscale describes how the columns should be scaled.
+#' @param xscale describes how the columns should be placed.
+#' @param proto If \code{TRUE} and the response variable is a factor,
+#'     then only the mean value for each response is plotted.
+#'     See \code{\link{prototypes}}.
+#' @param ...Extra arguments to \code{\link{labeled.curves}}.
+#' @details
+#'   Let the rows of the matrix be \emph{cases} and the columns be
+#'   \emph{dimensions}.
+#'   Each dimension is laid out as a vertical axis, and the value for each
+#'   case is plotted as a point on that axis.  Points corresponding to the
+#'   same case are connected by lines.  Thus each case is represented by a
+#'   curve or \emph{profile}, moving horizontally from dimension to dimension.
+#'
+#'   To enhance readability, the dimensions should usually be shifted to have
+#'   a common center and scaled to have
+#'   comparable units.  This is controlled by \code{yscale}.
+#'   If \code{yscale="linear"}, the dimensions are automatically shifted
+#'   and scaled
+#'   by the linear profiles method.  That is, the profiles are
+#'   made to be as straight as possible.
+#'   This may result in negative scaling for a dimension,
+#'   i.e. the axis is reversed so that moving up means a lower value.
+#'   When this happens, the dimension name is prepended with a minus sign.
+#'   If \code{yscale="range"}, the dimensions are shifted and scaled (by a
+#'                                                                    positive number) so that the data ranges from 0 to 1 on each axis.
+#'   If \code{yscale="none"}, the dimensions are plotted as-is.
+#'
+#'   Another important choice is the ordering and spacing of the axes
+#'   on the plot.
+#'   If \code{xscale="linear"}, the axes are placed according to the
+#'   linear profiles method.
+#'   If \code{xscale="equal"}, the axes are placed similarly to
+#'   \code{"linear"} but with the constraint that they must be equally
+#'   spaced.
+#'   If \code{xscale="none"}, the axes are placed in the order
+#'   that they appear in the matrix.
+#'
+#'   If the data frame has a categorical response, the profiles are colored
+#'   according to the response.  The color scheme can be adjusted using the
+#'   arguments to \code{\link{labeled.curves}}.
+#' @author Tom Minka
+#' @references A. Inselberg and B. Dimsdale.
+#'   "Parallel coordinates: A tool for visualizing multidimensional geometry."
+#'   Proc. of Visualization 90, p. 361-78, 1990.
+#'
+#' E. J. Wegman.
+#' "Hyperdimensional Data Analysis Using Parallel Coordinates."
+#' JASA 85:664-675, 1990.
+#' @seealso \code{\link{parallel.cases}},\code{\link{star.plot}}
+#' @examples
+#' data(iris)
+#' parallel.plot(iris)
+#' parallel.plot(iris,proto=F,labels=NULL)
 parallel.plot <- function(x,yscale=c("linear","range","none"),flipy=F,
                           xscale=c("equal","linear","none"),proto=T,flipx=F,
                           yaxt=if(yscale=="none") "s" else "n",type=1,...) {
@@ -1444,15 +1503,70 @@ expand.frame <- function(data,v) {
   }
   data
 }
-predict.plot.default <- function(x,y,labels,xlab,ylab,...) {
+
+#' Plot predictors versus response
+#'
+#' Makes a matrix of pairwise scatterplots with lowess-type trend lines.
+#'
+#' @author{Tom Minka}
+#'
+#' @aliases predict_plot predict_plot.data.frame predict_plot.formula
+#' @param formula a formula specifying the response and predictor variables
+#' @param data,x a data frame with at least two columns
+#' @param partial a model from which to compute partial residuals (used
+#'                                        by \code{\link{predict_plot.lm}}).
+#' @param mcol,mlwd If plotting partial residuals of an \code{lm},
+#'     the color and width of the model predictions.
+#' @param layout a vector \code{c(rows,cols)} specifying the desired
+#'     layout of panels.  Otherwise chosen automatically based on the size
+#'     of the plotting window.
+#' @param highlight a logical vector specifying which predictors to highlight.
+#' @param se If \code{TRUE}, show standard errors in linecharts.
+#' @param scol,slwd color and width of trend lines.
+#' @param span,degree,family parameters for the trend line (see \code{loess}).
+#' @param rtype how a factor response should be handled when drawing a
+#'     trend line.
+#' @param identify.pred A character vector of predictor names for which
+#'     to interactively \code{\link{identify}} points.  If \code{TRUE},
+#'     done for all predictors.
+#' @param mar margins within each panel
+#' @param xaxt,yaxt arguments to \code{par}
+#' @param col plotting color for symbols
+#' @param asp Aspect ratio for each panel.  If \code{"auto"}, the aspect
+#'     ratio is chosen automatically based on the trend line and
+#'     \code{\link{auto.aspect}}.
+#' @param given,given.lab,nlevels,pretty,key,bg,color.palette,pch.palette used for conditioning plots.
+#' @param main,xlab,ylab axis labels.
+#' @param ... extra arguments passed to \code{predict_plot.data.frame} or
+#'     \code{\link{plot}}.
+#' @return
+#'   If the predictor is numeric, makes a scatterplot with loess line on top.
+#'   If the predictor is a factor, makes a \code{\link{linechart}}.
+#'
+#' @seealso \code{\link{loess}}, \code{\link{model.plot}}
+#' @examples
+#' data(Cars)
+#' predict_plot(Price~., CarsT)
+#' fit = lm(Price~., CarsT)
+#' predict_plot(Price~., CarsT, partial=fit)
+#' # same thing using predict_plot.lm
+#' predict_plot(fit, partial=T)
+#' @export
+predict_plot <- function(...) UseMethod("predict_plot")
+
+#' @export
+predict_plot.default <- function(x,y,labels,xlab,ylab,...) {
   frame = data.frame(x,y)
   if(!missing(labels)) rownames(frame) = labels
   if(missing(xlab)) xlab = deparse(substitute(x))
   if(missing(ylab)) ylab = deparse(substitute(y))
-  predict.plot.data.frame(frame,xlab=xlab,ylab=ylab,...)
+  predict_plot.data.frame(frame,xlab=xlab,ylab=ylab,...)
 }
+
 std.error = function(x) sd(x)/sqrt(length(x))
-predict.plot.data.frame <- function(x,layout=NULL,partial=NULL,condensed=T,
+
+#' @export
+predict_plot.data.frame <- function(x,layout=NULL,partial=NULL,condensed=T,
                                     rtype=c("prob","logit","probit"),
                                     highlight,se=T,
                                     identify.pred=F,
@@ -1692,7 +1806,28 @@ predict.plot.data.frame <- function(x,layout=NULL,partial=NULL,condensed=T,
     }
   }
 }
-predict.plot.lm <- function(object,data,partial=F,ylab=NULL,...) {
+
+#' Plot predictors versus residuals.
+#'
+#' Makes a matrix of pairwise scatterplots with lowess-type trend lines.
+#'
+#' Partial residuals are computed by fitting a new model with the
+#' predictor removed, which is different from \code{residuals(type="partial")}.
+#' @author Tom Minka
+#' @param object the output of \code{lm}.
+#' @param data a data frame to use instead of \code{model.frame(object)}.
+#' @param partial If \code{TRUE}, plot partial residuals instead of residuals.
+#' @param ylab axis label.
+#' @param ... extra arguments for \code{\link{predict_plot.data.frame}}.
+#' @return
+#'   A plot similar to \code{\link{predict_plot}}, but where the vertical
+#'   axis is residuals.  These plots can be used to judge which predictors
+#'   should be added to the model.
+#' @seealso \code{\link{predict_plot}}
+#' @examples
+#' # see the examples for predict_plot
+#' @export
+predict_plot.lm <- function(object,data,partial=F,ylab=NULL,...) {
   if(!partial) {
     if(is.null(ylab)) ylab = paste("Residual",response.var(object))
     if(missing(data)) {
@@ -1701,14 +1836,15 @@ predict.plot.lm <- function(object,data,partial=F,ylab=NULL,...) {
       res <- residual.frame(object,data)
     }
     cat("plotting residuals\n")
-    predict.plot.data.frame(res,highlight=predictor.terms(object),ylab=ylab,...)
+    predict_plot.data.frame(res,highlight=predictor.terms(object),ylab=ylab,...)
   } else {
     if(missing(data)) data <- model.frame(object)
     else data = my.model.frame(formula(paste(response.var(object),"~.")),data)
     cat("plotting partial residuals\n")
-    predict.plot.data.frame(data,partial=object,ylab=ylab,...)
+    predict_plot.data.frame(data,partial=object,ylab=ylab,...)
   }
 }
+
 given.vars <- function(formula) {
   rhs <- formula[[3]]
   if(is.call(rhs) && (deparse(rhs[[1]]) == "|")) {
@@ -1716,12 +1852,15 @@ given.vars <- function(formula) {
     deparse(rhs[[3]])
   } else NULL
 }
+
 remove.given <- function(formula) {
   rhs <- formula[[3]]
   formula[[3]] <- rhs[[2]]
   formula
 }
-predict.plot.formula <- function(formula,data=parent.frame(),...) {
+
+#' @exportS3Method
+predict_plot.formula <- function(formula,data=parent.frame(),...) {
   # formula has givens?
   given = given.vars(formula)
   if(!is.null(given)) {
@@ -1730,7 +1869,7 @@ predict.plot.formula <- function(formula,data=parent.frame(),...) {
     else g <- data[[given]]
     if(is.null(g))
       stop(paste("variable \"",given,"\" not found",sep=""))
-    return(predict.plot.formula(formula,data,
+    return(predict_plot.formula(formula,data,
                                 given=g,given.lab=given,...))
   }
   if(F) {
@@ -1743,9 +1882,8 @@ predict.plot.formula <- function(formula,data=parent.frame(),...) {
     # formula has its own environment
     x <- model.frame.default(formula,data,na.action=na.pass)
   }
-  predict.plot.data.frame(x,...)
+  predict_plot.data.frame(x,...)
 }
-predict.plot <- function(...) UseMethod("predict.plot")
 
 ##############################################################################
 
@@ -1828,7 +1966,7 @@ interact.plot.data.frame <- function(x,ypred,partial=NULL,highlight,span=0.75,
           plot.new()
         } else if(is.factor(y[[py]])) {
           fmla = formula(paste(resp,"~",px,"|",py))
-          predict.plot(fmla,y,xlab="",ylab="",xaxt=xaxt,yaxt=yaxt,key=F)
+          predict_plot(fmla,y,xlab="",ylab="",xaxt=xaxt,yaxt=yaxt,key=F)
         } else if(is.factor(y[[resp]])) {
           color.plot(y,
                      xlab="",ylab="",mar=mar,key=F,axes=F,n=nlev,...)
