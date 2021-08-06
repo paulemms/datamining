@@ -89,7 +89,7 @@ cbind.extend <- function(df,df2) {
 #' Get response variable
 #'
 #' This works for
-#' @param object formula, model frame, ot fitted model
+#' @param object formula, model frame, or fitted model
 #'
 #' @return the name of the response variable
 #' @export
@@ -98,7 +98,7 @@ cbind.extend <- function(df,df2) {
 #' response.var(a ~ b + c)
 response.var <- function(object) {
   if(is.null(object) || is.array(object)) return(NULL)
-  if(class(object) == "formula") return(all.vars(update(object, . ~ NULL))[1])
+  if(length(class(object)) == 1 && class(object) == "formula") return(all.vars(update(object, . ~ NULL))[1])
   if(inherits(object, "terms")) {
     a <- attributes(object)
     if(!a$response) return(character(0))
@@ -274,13 +274,13 @@ my.aggregate.data.frame <- function(x, by, FUN, ...) {
 replaceInNamespace("aggregate.data.frame",my.aggregate.data.frame)
 
 #if(!exists("make.unique")) {
-  # desiderata for make.unique:
-  # 1. if A is unique, make.unique(c(A,B)) preserves A
-  # 2. make.unique(c(A,B)) = make.unique(c(make.unique(A),B))
+# desiderata for make.unique:
+# 1. if A is unique, make.unique(c(A,B)) preserves A
+# 2. make.unique(c(A,B)) = make.unique(c(make.unique(A),B))
 
-  # internal version
-  # does not satisfy desideratum #2
-  # make.unique(c("a","a","a")) != make.unique(c(make.unique(c("a","a")),"a"))
+# internal version
+# does not satisfy desideratum #2
+# make.unique(c("a","a","a")) != make.unique(c(make.unique(c("a","a")),"a"))
 
 
 #' Make character strings unique
@@ -317,40 +317,40 @@ replaceInNamespace("aggregate.data.frame",my.aggregate.data.frame)
 #' rbind(data.frame(x=1),data.frame(x=2),data.frame(x=3))
 #' rbind(rbind(data.frame(x=1),data.frame(x=2)),data.frame(x=3))
 #'
-  make.unique <- function(names) {
-    # names is character vector
-    if(!is.character(names)) stop("names must be a character vector")
-    while(any(dups <- duplicated(names))) {
-      names[dups] <- paste(names[dups], seq(length = sum(dups)), sep = "")
-    }
-    names
+make.unique <- function(names) {
+  # names is character vector
+  if(!is.character(names)) stop("names must be a character vector")
+  while(any(dups <- duplicated(names))) {
+    names[dups] <- paste(names[dups], seq(length = sum(dups)), sep = "")
   }
-  # satifies both desiderata
-  # make.unique(c("a","a","a.2","a")) ==
-  # make.unique(c(make.unique(c("a","a")),"a.2","a"))
-  make.unique <- function(names,sep=".",start=2) {
-    # names is character vector
-    if(!is.character(names)) stop("names must be a character vector")
-    repeat {
-      dups <- which(duplicated(names))
-      if(length(dups) == 0) break
-      # loop duplicates
-      for(j in dups) {
-        # for each duplicate, find the lowest value of cnt which makes it
-        # different from previous names.
-        i <- start
-        repeat {
-          newnam <- paste(names[j],i,sep=sep)
-          # compare to previous elements only
-          if(!any(is.element(newnam,names[1:(j-1)]))) break
-          i <- i + 1
-        }
-        names[j] <- newnam
+  names
+}
+# satifies both desiderata
+# make.unique(c("a","a","a.2","a")) ==
+# make.unique(c(make.unique(c("a","a")),"a.2","a"))
+make.unique <- function(names,sep=".",start=2) {
+  # names is character vector
+  if(!is.character(names)) stop("names must be a character vector")
+  repeat {
+    dups <- which(duplicated(names))
+    if(length(dups) == 0) break
+    # loop duplicates
+    for(j in dups) {
+      # for each duplicate, find the lowest value of cnt which makes it
+      # different from previous names.
+      i <- start
+      repeat {
+        newnam <- paste(names[j],i,sep=sep)
+        # compare to previous elements only
+        if(!any(is.element(newnam,names[1:(j-1)]))) break
+        i <- i + 1
       }
-      # repeat in case new duplicates have been created (see examples)
+      names[j] <- newnam
     }
-    names
+    # repeat in case new duplicates have been created (see examples)
   }
+  names
+}
 
 
 
@@ -385,58 +385,76 @@ replaceInNamespace("aggregate.data.frame",my.aggregate.data.frame)
 #' state.name[make.names(state.name) != state.name]# those 10 with a space
 #'
 make.names <- function(names, unique=F) {
-    names <- .Internal(make.names(as.character(names), unique))
-    # minka: change keywords
-    i <- is.element(names, c("for","while","repeat","if","else","function"))
-    if(any(i)) names[i] <- paste(names[i],".",sep="")
-    if(unique) names <- make.unique(names)
-    names
-  }
-  replaceInNamespace("make.names",make.names)
+  names <- .Internal(make.names(as.character(names), unique))
+  # minka: change keywords
+  i <- is.element(names, c("for","while","repeat","if","else","function"))
+  if(any(i)) names[i] <- paste(names[i],".",sep="")
+  if(unique) names <- make.unique(names)
+  names
+}
+replaceInNamespace("make.names",make.names)
 #}
 
-# does NOT throw an error if no terms
-terms.default <- function(x,...) x$terms
-terms.data.frame <- function(x,env=parent.frame(),...) {
-  fmla <- attr(x,"terms")
-  if(is.null(fmla)) {
-    # minka: assume the last column is the response
-    #nm <- make.names(names(x))
-    nm = names(x)
-    if(length(nm) > 1) {
-      lhs <- nm[length(nm)]
-      rhs <- nm[-length(nm)]
-    }
-    else {
-      lhs <- NULL
-      rhs <- nm
-    }
-    fmla <- terms(formula(paste(lhs,"~",paste(rhs,collapse="+")),env=env,...))
-  }
-  fmla
-}
-terms.table <- function(x,...) {
-  terms.data.frame(as.data.frame(x),...)
-}
 
-formula.default <- function (x,env=parent.frame(), ...)
-{
-  if (!is.null(x$formula))		eval(x$formula)
-  else if (!is.null(x$call$formula))	eval(x$call$formula)
-  # minka: always return formula, not terms
-  else if (!is.null(x$terms))		formula.terms(x$terms)
-  else if (!is.null(attr(x, "formula"))) attr(x, "formula")
-  else {form<-switch(mode(x),
-                     NULL = structure(NULL, class = "formula"),
-                     character = formula(eval(parse(text = x)[[1]])),
-                     call = eval(x), stop("invalid formula"))
-  environment(form)<-env
-  form
-  }
-}
-formula.data.frame <- function(x,env=parent.frame(),...) {
-  formula(terms(x,env=env),...)
-}
+#
+#  just rearrange data.frame and use stats functions?
+#
+#' # does NOT throw an error if no terms
+#' #' @export
+#' terms <- function(...) UseMethod("terms")
+#'
+#' #' @export
+#' terms.default <- function(x,...) x$terms
+#'
+#' #' @export
+#' terms.data.frame <- function(x,env=parent.frame(),...) {
+#'   fmla <- attr(x,"terms")
+#'   if(is.null(fmla)) {
+#'     # minka: assume the last column is the response
+#'     #nm <- make.names(names(x))
+#'     nm = names(x)
+#'     if(length(nm) > 1) {
+#'       lhs <- nm[length(nm)]
+#'       rhs <- nm[-length(nm)]
+#'     }
+#'     else {
+#'       lhs <- NULL
+#'       rhs <- nm
+#'     }
+#'     fmla <- terms(formula(paste(lhs,"~",paste(rhs,collapse="+")),env=env,...))
+#'   }
+#'   fmla
+#' }
+
+#' #' @export
+#' terms.table <- function(x,...) {
+#'   terms.data.frame(as.data.frame(x),...)
+#' }
+#'
+#' #' @export
+#' formula <- function(...) UseMethod("formula")
+#'
+#' #' @export
+#' formula.default <- function(x,env=parent.frame(), ...)
+#' {
+#'   if (!is.null(x$formula))		eval(x$formula)
+#'   else if (!is.null(x$call$formula))	eval(x$call$formula)
+#'   # minka: always return formula, not terms
+#'   else if (!is.null(x$terms))		formula.terms(x$terms)
+#'   else if (!is.null(attr(x, "formula"))) attr(x, "formula")
+#'   else {form<-switch(mode(x),
+#'                      NULL = structure(NULL, class = "formula"),
+#'                      character = formula(eval(parse(text = x)[[1]])),
+#'                      call = eval(x), stop("invalid formula"))
+#'   environment(form)<-env
+#'   form
+#'   }
+#' }
+#'
+#' #' @export
+#' formula.data.frame <- function(x,env=parent.frame(),...) {
+#'   formula(terms(x,env=env),...)
+#' }
 
 # Ripley says the original update is not broken (just non-modular)
 # related problem:
