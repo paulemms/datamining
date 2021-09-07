@@ -1,6 +1,21 @@
 # time series changepoints
 
 # convert a cut of x into a changepoint plot
+
+
+#' Plot time-series segments
+#'
+#' Shows how the mean level of a time-series varies between
+#'   segments.
+#' @param x a numeric vector or \code{ts} object
+#' @param b a numeric vector of break times
+#' @return Plots the time series as a line, then draws a blue horizontal line
+#'   through each segment, at the mean value of the segment.
+#' @author Tom Minka
+#' @seealso
+#'   \code{\link{break.ts}},
+#'   \code{\link{plot.breaks}}
+#' @export
 plot.segments.ts <- function(x,b,lwd=2,...) {
   plot(x,type="l",xlab="time",ylab="level")
   f <- cut(time(x),b,include.lowest=T)
@@ -68,9 +83,6 @@ break.ts <- function(x,n=2,trace=T,same.var=T,...) {
   if(trace) close.screen(all=TRUE)
   b
 }
-
-#############################################################################
-
 
 
 #' Boxplot with hierarchical cluster breaks

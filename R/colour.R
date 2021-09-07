@@ -1,9 +1,81 @@
 # Routines for manipulating colors and making color plots
 # Tom Minka
 
+
+#' Color schemes
+#'
+#' Compute a color scheme with a specified number of levels.
+#'
+#' The first two schemes are \emph{categorical}, providing maximum separation
+#' in hue, intended for depicting unordered categories.  \code{default.colors}
+#' has only dark colors, good for coloring points, while
+#' \code{default.colors.w} includes light colors, good for filling regions.
+#'
+#' The next four schemes are \emph{sequential}, from light to dark, with
+#' variation in hue to increase discrimination.  They are intended for
+#' depicting ordered levels.  The sequential order is more easily perceived
+#' with these schemes than with the built-in palettes \code{heat.colors},
+#' \code{terrain.colors}, and \code{topo.colors}.  The ordering can also be
+#' seen by the color-blind and when printed in black and white.
+#'
+#' The main difference between the sequential schemes is the variation in hue,
+#' with \code{YR.colors} having the most variation and \code{gray.colors}
+#' having the least.  Generally you should choose the amount of variation
+#' according to the number of levels.  I recommend \code{OrRd.colors} for three
+#' levels, \code{YlGnBu.colors} for four to eight levels, and \code{YR.colors}
+#' beyond eight levels.
+#'
+#' The last four schemes are \emph{double-ended} or \emph{diverging} schemes,
+#' which progress from one hue to a second hue, passing through white in the
+#' middle.  They are intended for representing signed ordered levels, such as
+#' residuals.  The main difference between them is the amount of separation
+#' between colors, so generally you use \code{GM.colors} when you want a few
+#' levels and \code{RYB.colors} when you want many.
+#'
+#' These functions can be used as the \code{color.palette} parameter to
+#' \code{\link{filled.contour}} and \code{\link{color.plot}}, for example.
+#'
+#' @aliases default.colors default.colors.w YR.colors YlGnBu.colors OrRd.colors
+#' gray.colors RYB.colors BrBg.colors RC.colors GM.colors
+#' @param n the number of colors desired
+#' @return A vector of strings, naming colors.
+#' @author Tom Minka
+#' @seealso \code{\link{colors}},\code{\link{rainbow}},\code{\link{color.cone}}
+#' @references The schemes in \code{YlGnBu.colors}, \code{OrRd.colors},
+#' \code{RYB.colors}, and \code{BrBg.colors} are from ColorBrewer.  The scheme
+#' in \code{YR.colors} is from Howard Seltman.
+#'
+#' Mark A. Harrower and Cynthia A. Brewer.  ColorBrewer: An Online Tool for
+#' Selecting Color Schemes for Maps, \emph{The Cartographic Journal}, in press.
+#' \url{http://www.colorbrewer.org/},
+#' \url{http://www.personal.psu.edu/faculty/c/a/cab38/ColorBrewerBeta.html}
+#'
+#' Generalized color schemes for Mapping and Visualization.  From Cynthia
+#' Brewer, Color Use Guidelines for Mapping and Visualization.  Reprinted at
+#' the Gallery of Data Visualization by Michael Friendly.
+#' \url{http://www.math.yorku.ca/SCS/Gallery/images/S12-fullstructureClean.gif}
+#'
+#' Dan Carr.  Color perception, the importance of gray and residuals, on a
+#' choropleth map.  \emph{Statistical Computing & Graphics Newsletter}
+#' 5(1):16-20, 1994
+#' \url{http://cm.bell-labs.com/cm/ms/who/cocteau/newsletter/issues/back/v51.pdf}
+#' @examples
+#'
+#' data(Housing)
+#' #color.plot(Price ~ Rooms + Low.Status, Housing, bg=gray(0.5),
+#' #           color.palette=YlGnBu.colors)
+#' #color.plot(Price ~ Rooms + Low.Status, Housing, bg=gray(0.5),
+#' #            color.palette=YR.colors)
+#' #color.plot(Price ~ Rooms + Low.Status, Housing, bg=gray(0.5),
+#' #            color.palette=RYB.colors,nlevels=5)
+#'
+#' # also see examples for color.cone
+#' @export
+default.colors <- function(n) ((0:(n-1))%%6+1)
+
 # intended for white background
 gray.colors <- function(n) gray(rev(0:(n-1))/n)
-default.colors <- function(n) ((0:(n-1))%%6+1)
+
 # good for objects which are being outlined (e.g. pies)
 default.colors.w <- function(n) c(8,seq(len=n-1))
 # these are from
@@ -374,16 +446,16 @@ color.plot.formula <- function(formula,data=parent.frame(),...) {
 #' @examples
 #'
 #' data(iris)
-#' color.plot(iris)
-#' color.plot(Species ~ Petal.Length + Petal.Width, iris)
+#' #color.plot(iris) # ERROR
+#' #color.plot(Species ~ Petal.Length + Petal.Width, iris)
 #' #color.plot(Species ~ Petal.Length, iris)
 #' #color.plot(Species ~ Petal.Length, iris,jitter=T)
-#' color.plot(iris, col=1)
-#' color.plot(iris, col=c(1,2))
+#' #color.plot(iris, col=1)
+#' #color.plot(iris, col=c(1,2))
 #'
 #' data(state)
 #' x <- data.frame(state.x77)
-#' color.plot(Murder ~ Frost + Illiteracy, x, labels=T, cex=0.5)
+#' #color.plot(Murder ~ Frost + Illiteracy, x, labels=T, cex=0.5)
 #'
 #' @export
 color.plot.data.frame <- function(x,z,zlab=NULL,xlab=NULL,ylab=NULL,labels=F,...) {
@@ -550,12 +622,49 @@ color.plot.default <- function(x,y,z,labels=NULL,data=parent.frame(),
 # color.plot(runif(10),runif(10),c(rep("a",5),rep("b",5)),rep("foo",10))
 
 # this part same as color.plot
-text.plot <- function(object,...) UseMethod("text.plot")
-text.plot.formula <- function(formula,data=parent.frame(),...) {
+
+#'
+#' Make a plot of text labels
+#'
+#' Like \code{\link{text}} except it creates a new plot with
+#' limits chosen to make all labels visible.
+#' @param x,y numeric vectors, same length
+#' @param data a data frame with at least two columns
+#' @param formula a formula specifying a response and predictor variable
+#' @param labels character vector, same length as \code{x}
+#' @param srt rotation angle as in \code{\link{text}}.
+#' @param adj text justification as in \code{\link{text}}.
+#' @details
+#'   The main job of \code{\link{text.plot}} is finding the right plot
+#'   limits so that all labels are visible.  It does this by computing the
+#'   bounding box of each label (taking into account text rotation and
+#'                               justification) and solving a system of inequalities which ensure that
+#'   each label fits entirely into the plot window.
+#' @aliases text.plot text.plot.default text.plot.data.frame text.plot.formula
+#' @author Tom Minka
+#' @examples
+#' data(state)
+#' x <- data.frame(state.x77)
+#' text_plot(x$Frost, x$HS.Grad, rownames(x))
+#'
+#' # same thing, using text.plot.formula
+#' text_plot(HS.Grad ~ Frost, x)
+#'
+#' # notice how the limits change
+#' text_plot(HS.Grad ~ Frost, x, srt=45)
+#' text_plot(HS.Grad ~ Frost, x, srt=90)
+#' @export
+text_plot <- function(object,...) UseMethod("text_plot")
+
+
+#' @export
+text_plot.formula <- function(formula,data=parent.frame(),...) {
   x <- model.frame.default(formula,data,na.action=na.pass)
-  text.plot.data.frame(x,...)
+  text_plot.data.frame(x,...)
 }
-text.plot.data.frame <- function(x,labels=TRUE,xlab,ylab,...) {
+
+#' @export
+text_plot.data.frame <- function(x,labels=TRUE,xlab,ylab,...) {
   pred <- predictor.vars(x)[1]
   resp <- response.var(x)
   x1 <- x[[pred]]
@@ -563,9 +672,11 @@ text.plot.data.frame <- function(x,labels=TRUE,xlab,ylab,...) {
   if(identical(labels,TRUE)) labels <- rownames(x)
   if(missing(xlab)) xlab = pred
   if(missing(ylab)) ylab = resp
-  text.plot.default(x1,x2,labels,xlab=xlab,ylab=ylab,...)
+  text_plot.default(x1,x2,labels,xlab=xlab,ylab=ylab,...)
 }
-text.plot.default <- function(x,y,labels=NULL,xlab,ylab,xlim=NULL,ylim=NULL,
+
+#' @export
+text_plot.default <- function(x,y,labels=NULL,xlab,ylab,xlim=NULL,ylim=NULL,
                               main="",asp=NULL,move=F,
                               cex=par("cex"),pch=par("pch"),
                               adj=NULL,srt=0,axes=T,...) {

@@ -236,6 +236,21 @@ not <- function(x,i) {
   if(is.logical(i)) return(x[!i])
 }
 
+
+#' Sort levels of a factor
+#'
+#' The levels of a factor are sorted according to a summary statistic.
+#' @param f a factor
+#' @param x a vector, same length as \code{f}
+#' @param fun function to use to summarize groups of \code{x}
+#' @return
+#'   A copy of \code{f} with re-ordered levels.
+#' @author Tom Minka
+#' @examples
+#' data(OrchardSprays)
+#' sort.levels(OrchardSprays$treatment, OrchardSprays$decrease)
+#' sort.levels(OrchardSprays$treatment, OrchardSprays$decrease, fun=mean)
+#' @export
 sort.levels <- function(f,x,fun=median) {
   if(length(x) == length(f)) x <- tapply(x,f,fun)
   if(length(x) != length(levels(f))) stop("wrong number of values to sort by")

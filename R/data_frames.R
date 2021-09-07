@@ -1,9 +1,8 @@
 # data.frames
 
-formula.with.data <- function(fmla, data)
-{
-  # put data into the environment of formula
-  # from Brian Ripley
+# put data into the environment of formula
+# from Brian Ripley
+formula.with.data <- function(fmla, data) {
   if(identical(as.character(fmla[[3]]),".")) {
     # dot must be expanded
     resp = response.var(fmla)
@@ -16,8 +15,24 @@ formula.with.data <- function(fmla, data)
   fmla
 }
 
-# sort the rows of a data frame (df) according to column f
-# f can also be a vector with length(f)==nrow(df)
+
+#' Sort rows of a data frame
+#'
+#' Re-orders data frame rows so that a column is sorted.
+#' @param df a data frame
+#' @param f the name or number of a column of \code{df}, or a numeric vector
+#'     to play the role of a column of \code{df}. Default: Last column.
+#' @return
+#'   A reordered version of \code{df} where the values in column \code{f} are in
+#'   ascending order.
+#' @author Tom Minka
+#' @seealso
+#'   \code{\link{sort.cells}}
+#' @examples
+#' data(mtcars)
+#' sort.data.frame(mtcars, "mpg")
+#' sort(mtcars, f = "mpg") # using S3 despatch
+#' @exportS3Method
 sort.data.frame <- function(df,f=ncol(df),...) {
   if(length(f) == 1) f <- df[[f]]
   else if(length(f) != nrow(df))
@@ -25,6 +40,23 @@ sort.data.frame <- function(df,f=ncol(df),...) {
   df[order(f,...),,drop=F]
 }
 
+
+#' Sort an array
+#'
+#' Sort the cells of an array
+#' @param x an array
+#' @details Converts \code{x} to a data frame and calls
+#'   \code{\link{sort.data.frame}}.
+#' @return A data frame representation of \code{x}, sorted by cell value.
+#' @author Tom Minka
+#' @seealso
+#'   \code{\link{sort.data.frame}}
+#' @examples
+#' data(Titanic)
+#' sort.cells(Titanic)
+#' data(HairEyeColor)
+#' sort.cells(HairEyeColor)
+#' @export
 sort.cells <- function(x) {
   sort.data.frame(as.data.frame(x))
 }
@@ -37,8 +69,9 @@ empty.data.frame <- function(col.names) {
   structure(y,class="data.frame")
 }
 
-rbind.extend <- function(df,df2) {
+rbind_extend2 <- function(df,df2) {
   # like rbind, but allows different numbers of columns (NAs inserted)
+  # this version loops through all the column names and creates a new data.frame
   x <- list()
   col.names <- unique(c(names(df),names(df2)))
   for(j in 1:length(col.names)) {
@@ -58,7 +91,10 @@ rbind.extend <- function(df,df2) {
   class(x) <- "data.frame"
   x
 }
-rbind.extend <- function(df,df2) {
+
+rbind_extend <- function(df,df2) {
+  # like rbind, but allows different numbers of columns (NAs inserted)
+  # this version modifies the data.frames with new NA columns if necessary
   if(nrow(df) == 0) return(df2)
   if(nrow(df2) == 0) return(df)
   not.1 <- setdiff(names(df2),names(df))
@@ -86,6 +122,29 @@ cbind.extend <- function(df,df2) {
 }
 
 
+# Ripley suggests to get response
+# https://stat.ethz.ch/pipermail/r-help/2007-November/145649.html
+
+
+#' Get response variable
+#'
+#' @param obj formula, model frame, or fitted model
+#'
+#' @return character string
+#'
+#' @examples
+#' response_var(a ~ b + c)
+#' # response_var(~ b + c) # gives error
+#' response_var(Height + Volume ~ Girth)
+#' response_var(log(Volume) ~ Girth)
+response_var <- function(obj) {
+  f <- formula(obj)
+  if(length(f) < 3) stop("no response")
+  resp <- f[[2]]
+  deparse(resp)
+}
+
+#' TODO: remove this
 #' Get response variable
 #'
 #' This works for
@@ -96,6 +155,10 @@ cbind.extend <- function(df,df2) {
 #'
 #' @examples
 #' response.var(a ~ b + c)
+#' response.var(~ b + c) # gives '.'
+#' response.var(Height + Volume ~ Girth) # incorrect
+#' response.var(log(Volume) ~ Girth) # incorrect
+#'
 response.var <- function(object) {
   if(is.null(object) || is.array(object)) return(NULL)
   if(length(class(object)) == 1 && class(object) == "formula") return(all.vars(update(object, . ~ NULL))[1])
@@ -134,7 +197,7 @@ predictor.vars <- function(object) {
 }
 # returns all terms on the rhs, including higher-order terms
 predictor.terms <- function(object) {
-  attr(terms(object),"term.labels")
+  attr(terms(object),"term.labels") # TODO: need a terms.data.frame method for color.plot, stats doesn't have one
 }
 
 as.data.frame.col <- function(x,n="V1") {
@@ -818,10 +881,21 @@ pie.table <- function(m,layout,col=default.colors.w(nrow(m)),...) {
   }
 }
 
-##############################################################################
 
-# only for 2D tables right now
-sort.table <- function(x,k=NULL) {
+#' Sort rows and columns of a contingency table
+#'
+#' Score rows and columns via correspondence analysis, then sort
+#' the scores.
+#'
+#' Only for 2D tables right now.
+#' @param x a contingency table
+#' @seealso \code{\link{mosaicplot}}
+#' @examples
+#' data(blood)
+#' sort_table(blood)
+#'
+#' @export
+sort_table <- function(x,k=NULL) {
   if(!is.null(k)) {
     if(k == 1) {
       # sort rows only
@@ -947,7 +1021,7 @@ mine.associations <- function(x,top=10,targets=NULL,z=1) {
       for(v in 1:nd) {
         if(v != i && v != j) df[[dn[v]]] <- factor(rep(NA,nrow(df)))
       }
-      res <- rbind.extend(res,df)
+      res <- rbind_extend(res,df)
       # ensure unique rownames
       #rownames(res) <- nrow(res):1
     }

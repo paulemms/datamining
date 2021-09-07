@@ -1,8 +1,6 @@
 ---
 title: 'Lab 9: Linear Regression'
-output:
-  html_document:
-    df_print: paged
+output: html_notebook
 ---
 
 # Introduction
@@ -15,9 +13,9 @@ devtools::load_all()
 load('lab9.rda')
 ```
 
-# The dataset
+# The data set
 
-The dataset is 196 weeks of grocery sales for a store. The variables are:
+The data set is 196 weeks of grocery sales for a store. The variables are:
 
 | Variable | Description |
 | --- | --- |
@@ -34,20 +32,18 @@ The dataset is 196 weeks of grocery sales for a store. The variables are:
 | Price.l1 | TROP SB HOMESTYLE OJ 64 OZ
 | Sold.4 | Number of units sold for HH ORANGE JUICE 64 OZ
 
-It is stored in a matrix $x$. Look at the first few rows via x[1:3,].
+It is stored in a `data.frame` called `x`. We look at the first few rows of the `data.frame` using the `head` function.
 
-```{r view_x}
+```{r head_x}
 head(x)
 ```
 
 
-# Standardizing
+# Standardising
 
-First we make a copy of `x` and put the response firt in the `data.frame`. Then
-we transform `Sold.4` appropriately and standardize all variables to have zero 
-mean and unit variance.
+First we make a copy of `x` and put the response in the first column of the `data.frame`. Then we transform the variable `Sold.4` so that its distribution is more evenly distributed. Next we standardise all variables to have zero mean and unit variance using the `scale` function.
 
-```{r standardizing}
+```{r standardising}
 xx <- x[, c(ncol(x), 1:ncol(x)-1)]
 hist(xx$Sold.4)
 xx$Sold.4 <- log(xx$Sold.4)
@@ -57,21 +53,20 @@ hist(xx$Sold.4)
 
 # Adding predictors
 
-We construct a linear model to predict `Sold.4` as a function of Price.
+Let us construct a linear model to predict `Sold.4` as a function of Price.
 
-
-```{r}
+```{r fill_all}
 fit <- lm(Sold.4 ~ ., data=xx)
 summary(fit)
 ```
 
-Then we plot all variables versus the residuals of this model.
+Then we plot all the predictors versus the residuals of this model.
 
 ```{r all_residuals}
 predict_plot(fit, xx)
 ```
 
-The important predictors appear to be `Price.4`, `Price.5`, `Price.7` and `Price.11`.
+From the p-values, the important predictors appear to be `Price.4`, `Price.5`, `Price.7` and `Price.11`. The plots of residuals confirm that there are no anomalies in the fit.
 
 We pick one of the important predictors from the last step and include it in a
 new model.
@@ -132,5 +127,4 @@ par(mfrow = c(1, 1))
 ```
 
 Note that the partial residuals for `Sold.4` are shown using `predict_plot` 
-whereas `termplot` uses the partial residuals for each predictor on the vertical
-axis.
+whereas `termplot` uses the partial residuals for each predictor on the vertical axis.

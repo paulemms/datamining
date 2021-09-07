@@ -1,5 +1,30 @@
-#############################################################################
 
+
+#' Project data into fewer dimensions
+#'
+#' Reduces the dimensionality of a data set.
+#'
+#' @param x a data frame
+#' @param w a matrix with named rows and columns
+#' @details
+#'   Each column of \code{w} specifies a new variable, which is to be
+#'   constructed by combining existing variables according to the given weights.
+#' @return
+#'   A data frame where the variables named in the rows of \code{w} are
+#'   replaced by new variables named in the columns of \code{w}.
+#'   Other variables are left unchanged.
+#' @author Tom Minka
+#' @seealso
+#'   \code{\link{pca}}, \code{\link{projection}}, \code{\link{plot.axes}}
+#' @examples
+#' data(iris)
+#' #w = projection(iris, k=2)
+#' # w only involves the continuous attributes
+#' # the new variables are h1 and h2
+#' #x = project(iris, w)
+#' #color.plot(x)
+#' #plot.axes(w)
+#' @export
 project <- function(x,w) {
   pred <- rownames(w)
   xw <- data.frame(data.matrix(x[pred]) %*% w)
@@ -26,6 +51,37 @@ standardize.projection <- function(w) {
   w
 }
 
+
+#' Principal Component Analysis
+#'
+#' Computes a projection matrix that preserves spread.
+#'
+#' @param x a data frame.
+#' @param k the number of dimensions to project down to.
+#' @details
+#'   The projection is chosen so that the projected data is as "spread out"
+#'   as possible, measured according to the determinant of the covariance
+#'   matrix.
+#'   This turns out to be the top \code{k} eigenvectors of the data
+#'   covariance matrix.
+#'
+#'   The projection is "stabilized" so that small changes in the data do
+#'   not cause sign flips in the projection.
+#' @return
+#'   A matrix with named rows matching the numeric columns of \code{x} and
+#'   columns named \code{h1}, ..., \code{hk}.
+#'   Each column denotes a new dimension to be obtained as a linear combination
+#'   of the numeric variables in \code{x}.
+#'
+#' @author Tom Minka
+#' @seealso \code{\link{project}}, \code{\link{projection}},
+#'   \code{pca} in the \code{multiv} package
+#' @examples
+#' data(Housing)
+#' w <- pca(HousingT, k=2)
+#' #plot(project(HousingT, w), asp=1)
+#' #plot.axes(w)
+#' @export
 pca <- function(x,k=1,...) {
   x <- as.data.frame(x)
   x <- data.matrix(x[sapply(x,is.numeric)])
@@ -37,6 +93,8 @@ pca <- function(x,k=1,...) {
   colnames(w) <- paste("h",1:ncol(w),sep="")
   standardize.projection(w)
 }
+
+
 pca2 <- function(x,k=1) {
   # PCA vis Roweis's EM algorithm
   # takes O(dnk) time
@@ -73,6 +131,98 @@ pca2 <- function(x,k=1) {
   standardize.projection(w)
 }
 
+
+#' Discriminative projection
+#'
+#' Finds a projection matrix that separates data groups.
+#'
+#' @param x a data frame of variables to project.
+#' @param y a factor or numeric vector which defines the groups to separate.
+#'     If \code{y} is not given, it is
+#'     taken to be the response variable of \code{x} (the last column if
+#'                                                    \code{x} is not a \code{model.frame}).
+#' @param k the number of dimensions to project \code{x} down to.
+#' @param given A matrix specifying axes to avoid.  The projection matrix
+#'     will be orthogonal to \code{given}.
+#' @param type see below.
+#' @param ... additional parameters depending on \code{type}.
+#' @details
+#'   This function only uses the second-order statistics of the data (means
+#'                                                                    and covariances of the groups).
+#'
+#'   If \code{type="m"}, the within-group covariances are assumed equal
+#'   and the projection will try to separate the projected means.
+#'
+#'   If \code{type="v"}, the within-group means are assumed equal
+#'   and the projection will try to separate the projected covariances.
+#'
+#'   If \code{type="mv"}, the projection will try to separate the projected
+#'   means and covariances, by maximizing the divergence between the
+#'   projected classes (as Gaussians).
+#'
+#'   If \code{y} is a numeric vector, overlapping classes are defined by
+#'   grouping data points with similar values of \code{y}.
+#'   The optional argument \code{span} controls how big the classes will
+#'   be (as a percentage of the dataset), and \code{res} controls the
+#'   amount of overlap.  The total number of classes will be
+#'   \code{res}/\code{span}.  The default values are usually acceptable.
+#'
+#'   The projection is "stabilized" so that small changes in the data do
+#'   not cause sign flips in the projection.
+#' @return
+#'   A matrix suitable for input to \code{\link{project}},
+#'   with named rows matching columns of \code{x} and
+#'   columns named \code{h1}, ..., \code{hk}.
+#'   Each column denotes a new dimension to be obtained as a linear combination
+#'   of the variables in \code{x}.
+#' @author Tom Minka
+#' @references
+#'   m-projection is Fisher's linear discriminant analysis.
+#'   mv-projection is heteroscedastic discriminant analysis:
+#'
+#'   N. Kumar and A.G. Andreou.
+#'   Heteroscedastic discriminant analysis and
+#'   reduced rank HMMs for improved speech recognition.
+#'   \emph{Speech Communication} 26: 283-297, 1998.
+#'
+#'   The case when \code{y} is numeric is sliced inverse
+#'   regression:
+#'
+#'   K.-C. Li.  Sliced inverse regression for dimension reduction.
+#'   \emph{Journal of the American Statistical Association} 86(414):
+#'   316-327, 1991.
+#' @seealso \code{\link{project}},\code{\link{pca}}
+#' @examples
+#' # illustrate difference between (m,v,mv)
+#' library(MASS)
+#' m1 <- c(6,6)
+#' v1 <- array(c(2,1.9,1.9,2),c(2,2))
+#' #v1 <- array(c(1,0,0,1),c(2,2))
+#' x1 <- mvrnorm(100,m1,v1)
+#' m2 <- c(0,0)
+#' v2 <- array(c(20,0,0,10),c(2,2))
+#' x2 <- mvrnorm(300,m2,v2)
+#' x = as.data.frame(rbind(x1,x2))
+#' y = factor(c(rep(1,nrow(x1)),rep(2,nrow(x2))))
+#' plot(x[,1],x[,2],col=1,xlab="",ylab="",asp=1)
+#' points(x2[,1],x2[,2],col=2)
+#' w = projection(x,y,type="m")
+#' abline(0,w[2]/w[1],col=3)
+#' w = projection(x,y,type="v")
+#' abline(0,w[2]/w[1],col=4)
+#' w = projection(x,y,type="mv")
+#' abline(0,w[2]/w[1],col=5)
+#' my.legend(1,c("m","v","mv"),col=3:5,lty=1)
+#'
+#' # regression projection
+#' x1 <- 2*runif(200)-1
+#' x2 <- 2*runif(200)-1
+#' y <- x1^2/2 + x2^2
+#' x <- data.frame(x1,x2)
+#' #color.plot(x[,1],x[,2],y)
+#' w = projection(x,y)
+#' abline(0,w[2]/w[1],col=4)
+#' @export
 projection <- function(x,y=NULL,k=1,type=c("mv","m","v","nn"),...) {
   if(is.null(y)) {
     resp <- response.var(x)
@@ -387,6 +537,30 @@ color.plot.project.glm <- function(fit,data,type="mv",col=3,coef=F,lwd=2,...) {
   invisible(w)
 }
 
+#' Plot axes under projection
+#'
+#' Shows how unit vectors along the original dimensions appear
+#'   under a projection.
+#' @param w a numeric array with two columns and named rows
+#' @param col color of arrows
+#' @param origin If T, arrows emerge from (0,0).  If F, arrows emerge
+#'     from the center of the figure.  If not given, arrows emerge from
+#'     (0,0) if (0,0) is visible, otherwise from the figure center.
+#' @param keep a length in inches, below which an arrow is not plotted.
+#' @details
+#'   Each row of the array specifies a location in the figure.  This
+#'   location can be understood as the place where a unit vector
+#'   along one of the original dimensions would appear.  An arrow is
+#'   drawn from the origin pointing toward this location and labeled with
+#'   the row name.  The relative length of the arrow is determined by the
+#'   distance of the location from the origin, but all arrows are scaled as
+#'   much as possible, to reduce crowding, while remaining inside the
+#'   figure limits.  Arrows which are very short are not plotted at all.
+#' @return Uses \code{\link{arrows}} to draw arrows on top of the current plot.
+#' @author{Tom Minka}
+#' @seealso
+#'   \code{\link{project}}, \code{\link{pca}}, \code{\link{projection}}
+#' @export
 plot.axes <- function(w,col=2,origin=NULL,keep=NULL,top=NULL,
                       cex=par("cex"),labels,...) {
   # labels is to prevent it going to text()
@@ -470,7 +644,6 @@ plot.axes <- function(w,col=2,origin=NULL,keep=NULL,top=NULL,
   text(w[i,1],w[i,2],labels=rownames(w)[i],col=col,cex=cex,...)
 }
 
-#############################################################################
 
 projection.nn <- function(x,y=NULL,k=1,...) {
   if(is.null(y)) {
@@ -529,7 +702,6 @@ projection.nn <- function(x,y=NULL,k=1,...) {
   standardize.projection(w)
 }
 
-#############################################################################
 
 identify.data.frame <- function(x,n=1,index=F,...) {
   resp = response.var(x)
@@ -574,7 +746,6 @@ hist.data.frame <- function(x,breaks,layout,col="tomato",...) {
   }
 }
 
-#############################################################################
 
 factor.dichotomy <- function(f,lev,label=NULL) {
   # lev can be a vector of levels
@@ -726,7 +897,7 @@ score.simple.stats <- function(va,vs,ns,k=1,type="mv",...) {
     w <- simple.projection(pred,p)
     ri <- c(as.list(p), list(score.mv(w,va,vs,ns)))
     names(ri) <- names(r)
-    r <- rbind.extend(r,data.frame(ri))
+    r <- rbind_extend(r,data.frame(ri))
   }
   sort.data.frame(r)
 }
@@ -777,8 +948,6 @@ top.features <- function(x,r,m=4,layout,type="mv",...) {
   }
 }
 
-
-#############################################################################
 
 outliers <- function(x,p=0.05,names=T) {
   x <- x[sapply(x,is.numeric)]

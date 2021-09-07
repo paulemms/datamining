@@ -127,7 +127,7 @@ merge.table.cells <- function(x,v,i,j) {
 #' determining the appropriate dimensions.  An interesting number is one that
 #' directly precedes a sudden jump in the chi-square distance.
 #' @author Tom Minka
-#' @seealso \code{\link{sort.table}}, \code{\link{mosaicplot}},
+#' @seealso \code{\link{sort_table}}, \code{\link{mosaicplot}},
 #' \code{\link{linechart}}
 #' @examples
 #'

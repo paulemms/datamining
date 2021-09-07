@@ -1,3 +1,5 @@
+# different types of plots for data mining
+
 prototypes <- function(x,y=NULL,fun=mean) {
   # basically a cleaned-up version of "aggregate"
   # that is specialized for one "by" factor
@@ -91,9 +93,11 @@ reorder.hc.data.frame <- function(x,dims=c(1,2)) {
   }
   ord
 }
-apply.order <- function(x,ord) {
-  x = x[ord[[1]],]
-  x = x[,ord[[2]]]
+
+
+apply_order <- function(x, ord) {
+  x <- x[ord[[1]],]
+  x <- x[,ord[[2]]]
   x
 }
 
@@ -102,7 +106,6 @@ apply.order <- function(x,ord) {
 #' Data Image
 #'
 #' Each value in a data matrix is represented by a colored pixel.
-#'
 #'
 #' @param x a matrix or data frame.
 #' @param reorder If \code{TRUE}, the rows and columns are reordered so that
@@ -122,9 +125,9 @@ apply.order <- function(x,ord) {
 #' @examples
 #'
 #' data(USJudgeRatings)
-#' data.image(USJudgeRatings,col=RC.colors(32))
+#' data_image(USJudgeRatings,col=RC.colors(32))
 #'
-data.image <- function(x,las=1,reorder=T,scale=T,...) {
+data_image <- function(x,las=1,reorder=T,scale=T,...) {
   #mar=c(2.5,8.5,0,0.1)
   x = as.data.frame(x)
   x <- x[sapply(x,is.numeric)]
@@ -141,13 +144,37 @@ data.image <- function(x,las=1,reorder=T,scale=T,...) {
   if(length(reorder) == 1) reorder = rep(reorder,2)
   if(any(reorder)) {
     ord <- reorder.hc.data.frame(x,which(reorder))
-    x = apply.order(x,ord)
+    x <- apply_order(x, ord)
   }
   image.table(as.matrix(x),las=las,...)
   invisible(ord)
 }
 
-star.plot <- function(x,draw.segments=T,proto=T,reorder=T,scale=T,...) {
+
+#' Reordered and scaled star plot
+#'
+#' Automatically reorders and scales the variables to make a
+#' readable star plot.
+#'
+#' @param x a matrix or data frame.  Each row makes one star.
+#' @param proto If \code{TRUE} and the response variable is a factor,
+#'     then only the mean value for each response is plotted.
+#'     See \code{\link{prototypes}}.
+#' @param reorder If \code{TRUE}, the rows and columns are reordered so
+#'     that the data along each row and each column follows a linear trend.
+#'     Can also be a vector of two logicals, indicating separately
+#'     whether to reorder rows and/or columns.
+#' @param scale If \code{TRUE}, each column is scaled to have minimum
+#'     0 and maximum 1.
+#' @param... additional arguments for \code{\link{stars}}.
+
+#' @author{Tom Minka}
+#' @seealso \code{\link{stars}}
+#' @examples
+#' data(iris)
+#' star_plot(iris)
+#' @export
+star_plot <- function(x,draw.segments=T,proto=T,reorder=T,scale=T,...) {
   # reorder = c(T,F) will only reorder cases
   x = as.data.frame(x)
   resp <- response.var(x)
@@ -165,8 +192,8 @@ star.plot <- function(x,draw.segments=T,proto=T,reorder=T,scale=T,...) {
   }
   if(length(reorder) == 1) reorder = rep(reorder,2)
   if(any(reorder)) {
-    ord = reorder.svd.data.frame(x,which(reorder))
-    x = apply.order(x,ord)
+    ord <- reorder.svd.data.frame(x,which(reorder))
+    x <- apply_order(x, ord)
   }
   #opar <- par(mar=c(0.05,0,0,0.1))
   #on.exit(par(opar))
@@ -301,9 +328,10 @@ parallel.cases <- function(x,yscale=c("linear","range","none"),
 #' @seealso \code{\link{parallel.cases}},\code{\link{star.plot}}
 #' @examples
 #' data(iris)
-#' parallel.plot(iris)
-#' parallel.plot(iris,proto=F,labels=NULL)
-parallel.plot <- function(x,yscale=c("linear","range","none"),flipy=F,
+#' parallel_plot(iris)
+#' parallel_plot(iris,proto=F,labels=NULL)
+#' @export
+parallel_plot <- function(x,yscale=c("linear","range","none"),flipy=F,
                           xscale=c("equal","linear","none"),proto=T,flipx=F,
                           yaxt=if(yscale=="none") "s" else "n",type=1,...) {
   x <- as.data.frame(x)
@@ -437,6 +465,7 @@ linear.profiles2 <- function(y,x=NULL,s=NULL) {
   list(x=x,s=s)
 }
 
+
 linear.profiles <- function(y,x=NULL,s=NULL,type=1) {
   y = as.matrix(y)
   #y = scale(y)
@@ -477,7 +506,6 @@ linear.profiles <- function(y,x=NULL,s=NULL,type=1) {
   list(x=x,s=s)
 }
 
-#############################################################################
 
 # abbreviate strings so that max width is w, and strings remain unique
 abbreviate.width <- function(s,w,cex=par("cex")) {
@@ -721,77 +749,6 @@ my.stars <-
   function(x, full = TRUE, scale = TRUE, radius = TRUE,
            labels = dimnames(x)[[1]],
            locations = NULL, xlim = NULL, ylim = NULL, len = 1,
-
-
-#' Color schemes
-#'
-#' Compute a color scheme with a specified number of levels.
-#'
-#' The first two schemes are \emph{categorical}, providing maximum separation
-#' in hue, intended for depicting unordered categories.  \code{default.colors}
-#' has only dark colors, good for coloring points, while
-#' \code{default.colors.w} includes light colors, good for filling regions.
-#'
-#' The next four schemes are \emph{sequential}, from light to dark, with
-#' variation in hue to increase discrimination.  They are intended for
-#' depicting ordered levels.  The sequential order is more easily perceived
-#' with these schemes than with the built-in palettes \code{heat.colors},
-#' \code{terrain.colors}, and \code{topo.colors}.  The ordering can also be
-#' seen by the color-blind and when printed in black and white.
-#'
-#' The main difference between the sequential schemes is the variation in hue,
-#' with \code{YR.colors} having the most variation and \code{gray.colors}
-#' having the least.  Generally you should choose the amount of variation
-#' according to the number of levels.  I recommend \code{OrRd.colors} for three
-#' levels, \code{YlGnBu.colors} for four to eight levels, and \code{YR.colors}
-#' beyond eight levels.
-#'
-#' The last four schemes are \emph{double-ended} or \emph{diverging} schemes,
-#' which progress from one hue to a second hue, passing through white in the
-#' middle.  They are intended for representing signed ordered levels, such as
-#' residuals.  The main difference between them is the amount of separation
-#' between colors, so generally you use \code{GM.colors} when you want a few
-#' levels and \code{RYB.colors} when you want many.
-#'
-#' These functions can be used as the \code{color.palette} parameter to
-#' \code{\link{filled.contour}} and \code{\link{color.plot}}, for example.
-#'
-#' @aliases default.colors default.colors.w YR.colors YlGnBu.colors OrRd.colors
-#' gray.colors RYB.colors BrBg.colors RC.colors GM.colors
-#' @param n the number of colors desired
-#' @return A vector of strings, naming colors.
-#' @author Tom Minka
-#' @seealso \code{\link{colors}},\code{\link{rainbow}},\code{\link{color.cone}}
-#' @references The schemes in \code{YlGnBu.colors}, \code{OrRd.colors},
-#' \code{RYB.colors}, and \code{BrBg.colors} are from ColorBrewer.  The scheme
-#' in \code{YR.colors} is from Howard Seltman.
-#'
-#' Mark A. Harrower and Cynthia A. Brewer.  ColorBrewer: An Online Tool for
-#' Selecting Color Schemes for Maps, \emph{The Cartographic Journal}, in press.
-#' \url{http://www.colorbrewer.org/},
-#' \url{http://www.personal.psu.edu/faculty/c/a/cab38/ColorBrewerBeta.html}
-#'
-#' Generalized color schemes for Mapping and Visualization.  From Cynthia
-#' Brewer, Color Use Guidelines for Mapping and Visualization.  Reprinted at
-#' the Gallery of Data Visualization by Michael Friendly.
-#' \url{http://www.math.yorku.ca/SCS/Gallery/images/S12-fullstructureClean.gif}
-#'
-#' Dan Carr.  Color perception, the importance of gray and residuals, on a
-#' choropleth map.  \emph{Statistical Computing & Graphics Newsletter}
-#' 5(1):16-20, 1994
-#' \url{http://cm.bell-labs.com/cm/ms/who/cocteau/newsletter/issues/back/v51.pdf}
-#' @examples
-#'
-#' data(Housing)
-#' color.plot(Price ~ Rooms + Low.Status, Housing, bg=gray(0.5),
-#'            color.palette=YlGnBu.colors)
-#' color.plot(Price ~ Rooms + Low.Status, Housing, bg=gray(0.5),
-#'            color.palette=YR.colors)
-#' color.plot(Price ~ Rooms + Low.Status, Housing, bg=gray(0.5),
-#'            color.palette=RYB.colors,nlevels=5)
-#'
-#' # also see examples for color.cone
-#'
            colors = NULL, abbrev=T,
            key.loc = NA, key.labels = NULL, key.xpd = TRUE,
            draw.segments = FALSE, axes = FALSE,
@@ -1017,6 +974,7 @@ my.stars <-
     } # Unit key is drawn and labelled
     invisible()
   }
+
 qp = function(A,b,tol=1e-10) {
   # returns the vector x which minimizes x'x subject to Ax=b.
   #library(MASS)
@@ -1279,8 +1237,34 @@ move.collisions2 <- function(x,y,w,h,cost=rep(1,length(x)),los=F) {
   x0[ok]=x;y0[ok]=y;x=x0;y=y0
   cbind(x,y)
 }
-# modified from rw1030/library/base/R/base/read.ftable
-read.array <- function(file, sep = "", quote = "\"", skip = 0)
+
+
+#' Read and write arrays
+#'
+#' Read data into an array from the console or file
+#'
+#' The array can have one of several formats.  The preferred format,
+#'   produced by \code{\link{write.array}}, looks like \code{
+#'     cvar.nam
+#'     rvar.1.nam   ... rvar.k.nam    cvar.lev.1 ... cvar.lev.l
+#'     rvar.1.lev.1 ... rvar.k.lev.1  ...        ... ...
+#'   }
+#'
+#' Modified from rw1030/library/base/R/base/read.ftable
+#' @param file either a character string naming a file or a connection which the data are to be read from or written to. "" indicates input from the console for reading and output to the console for writing.
+#' @param sep the field separator string. Values on each line of the file are separated by this string.
+#' @param quote the set of quoting characters as a single character string.
+#' @param skip the number of lines of the input file to skip before beginning to read data.
+#' @return An array.
+#' @aliases write_array
+#' @author Tom Minka
+#' @examples
+#' data(HairEyeColor)
+#' fn <- tempfile()
+#' write_array(HairEyeColor, fn)
+#' read_array(fn)
+#' @export
+read_array <- function(file, sep = "", quote = "\"", skip = 0)
 {
   z <- count.fields(file, sep, quote, skip)
   if(z[2] != max(z)) stop("unknown array representation")
@@ -1357,7 +1341,8 @@ read.array <- function(file, sep = "", quote = "\"", skip = 0)
 
 # from rw1030/library/base/R/base/write.ftable
 # modified to accept arrays
-write.array <- function(x, file = "", quote = TRUE,
+#' @export
+write_array <- function(x, file = "", quote = TRUE,
                         digits = getOption("digits"))
 {
   ox <- x
@@ -1487,7 +1472,6 @@ partial.residual.frame <- function(object,omit,...) {
   x[c(pred,resp)]
 }
 
-##############################################################################
 
 expand.frame <- function(data,v) {
   # also see expand.model.frame
@@ -1503,6 +1487,7 @@ expand.frame <- function(data,v) {
   }
   data
 }
+
 
 #' Plot predictors versus response
 #'
@@ -1546,11 +1531,11 @@ expand.frame <- function(data,v) {
 #' @seealso \code{\link{loess}}, \code{\link{model.plot}}
 #' @examples
 #' data(Cars)
-#' predict_plot(Price~., CarsT)
-#' fit = lm(Price~., CarsT)
-#' predict_plot(Price~., CarsT, partial=fit)
+#' predict_plot(Price ~ ., CarsT)
+#' fit <- lm(Price ~ ., CarsT)
+#' predict_plot(Price~ ., CarsT, partial=fit)
 #' # same thing using predict_plot.lm
-#' predict_plot(fit, partial=T)
+#' predict_plot(fit, partial = TRUE)
 #' @export
 predict_plot <- function(...) UseMethod("predict_plot")
 
@@ -1885,7 +1870,6 @@ predict_plot.formula <- function(formula,data=parent.frame(),...) {
   predict_plot.data.frame(x,...)
 }
 
-##############################################################################
 
 expand.cross <- function(object) {
   resp <- response.var(object)
@@ -1985,6 +1969,10 @@ interact.plot.data.frame <- function(x,ypred,partial=NULL,highlight,span=0.75,
     }
   }
 }
+
+interact.plot <- function(object, ...) UseMethod("interact.plot")
+
+
 interact.plot.lm <- function(object,data,partial=F,main=NULL,...) {
   if(!partial) {
     if(missing(data)) {
@@ -2002,7 +1990,7 @@ interact.plot.lm <- function(object,data,partial=F,main=NULL,...) {
     interact.plot.data.frame(data,partial=object,main=main,...)
   }
 }
-interact.plot <- function(object, ...) UseMethod("interact.plot")
+
 
 if(!exists("my.factor.scope")) old.factor.scope = factor.scope
 my.factor.scope <- function(factor, scope)

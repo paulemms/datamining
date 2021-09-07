@@ -395,12 +395,68 @@ vrml.box <- function(xlim,ylim,zlim,...) {
   vrml.box.wrl(vrml.to.scale(cbind(xlim,ylim,zlim)),...)
 }
 
-
+#' View points in 3D
+#'
+#' Creates a VRML scene with the given points.
+#' @aliases vrml.plot3d vrml.plot3d.default vrml.plot3d.data.frame vrml.plot3d.formula
+#' @param x,y,z numeric vectors giving the coordinates of the points.
+#' @param frame a data frame with three columns.
+#' @param data an environment in which to lookup x,y,z.
+#' @param xlab,ylab,zlab}{axis labels.
+#' @param pch a numeric code for the graphic object to place at
+#'     each location.  See details.
+#' @param col a single color or vector of colors, used to color the points.
+#' @param scale a vector of 3 numbers, defining the size of the box into
+#'     which the points are placed.  You can control the aspect ratio this way.
+#' @param file.name a filename (with or without the .wrl extension) to
+#'     receive the VRML.  If \code{NULL}, a temporary name is chosen.
+#' @param cex a scale factor for the objects.
+#' @param cex.axis a scale factor for the axis labels.
+#' @param light If \code{TRUE}, the scene will contain a light at each
+#'     corner of the cube, with no headlight.
+#'     Otherwise, the scene will contain no lights and rely on the
+#'     headlight only.
+#' @param axes If \code{TRUE}, a box with axis labels is drawn around the
+#'     points.
+#' @param ... additional arguments to pass to the internal drawing routines,
+#'     or to pass through to \code{vrml.plot3d.default}
+#'     (for the \code{data.frame} and \code{formula} methods).
+#' @details
+#'   A VRML scene description file is created, and opened with a browser if
+#'   one is available.
+#'
+#'   VRML is a standard language for describing 3D scenes, and the file
+#'   produced by this function should be portable across all machines
+#'   with a VRML browser.
+#'
+#'   If \code{pch=0}, a cube is placed at each location.
+#'   If \code{pch=1}, a sphere is placed at each location.
+#'   If \code{pch="."}, a dot is placed at each location.
+#'   The latter option is the fastest, and will be chosen automatically if
+#'   the scale is small or the dataset is large.
+#' @author Tom Minka
+#' @references
+#'   \url{http://web3d.vapourtech.com/tutorials/vrml97/}
+#'
+#'   \url{www.wed3d.org/resources/vrml_ref_manual/Book.html}
+#' @examples
+#' data(Housing)
+#' w = pca(HousingT,k=3)
+#' #x = project(HousingT,w)
+#' #plot.new()
+#' #vrml.plot3d(x)
+#' @export
 vrml.plot3d <- function(object, ...) UseMethod("vrml.plot3d")
+
+
+#' @export
 vrml.plot3d.formula <- function(formula,data=parent.frame(),...) {
   x = model.frame.default(formula,data,na.action=na.pass)
   vrml.plot3d.data.frame(x,...)
 }
+
+
+#' @export
 vrml.plot3d.data.frame <- function(x,labels=NULL,...,xlab,ylab,zlab) {
   resp = response.var(x)
   pred = predictor.vars(x)
@@ -411,6 +467,9 @@ vrml.plot3d.data.frame <- function(x,labels=NULL,...,xlab,ylab,zlab) {
   vrml.plot3d.default(x[,pred[1]],x[,pred[2]],x[,resp],labels=labels,
                       xlab=xlab,ylab=ylab,zlab=zlab,...)
 }
+
+
+#' @export
 vrml.plot3d.default <- function(x,y,z,data=parent.frame(),labels=NULL,
                                 xlab,ylab,zlab,
                                 pch=0,col=3,
@@ -476,6 +535,8 @@ vrml.plot3d.default <- function(x,y,z,data=parent.frame(),labels=NULL,
   cat("]}\n",file=vrml.file)
   vrml.close()
 }
+
+
 vrml.color.plot <- function(x,y,nlevels=4,color.palette=YlGnBu.colors,...) {
   if(missing(y)) {
     resp = response.var(x)
@@ -493,7 +554,57 @@ vrml.color.plot <- function(x,y,nlevels=4,color.palette=YlGnBu.colors,...) {
   vrml.plot3d(formula(x),x,col=col,light=F,...)
 }
 
+#' View a surface in 3D
+#'
+#' Creates a VRML scene with a shaded surface.
+#' @aliases vrml.surface vrml.surface.default vrml.surface.loess
+#' @param x,y locations of grid lines at which the values in \code{z} are
+#'     measured.
+#' @param z}{a matrix containing the values to be plotted (\code{NA}s are
+#'                                                          allowed).
+#' @param xlab,ylab,zlab}{axis labels.  If \code{NULL}, taken from the
+#'     deparsed expressions for \code{x,y,z}.
+#' @param col the color of the surface.
+#' @param scale a vector of 3 numbers, defining the size of the box into
+#'     which the surface is placed.  You can control the aspect ratio this way.
+#' @param file.name a filename (with or without the .wrl extension) to
+#'     receive the VRML.  If \code{NULL}, a temporary name is chosen.
+#' @param cex.axis a scale factor for the axis labels.
+#' @param light If \code{TRUE}, the scene will contain its own light
+#'     and no headlight.
+#'     Otherwise, the scene will contain no lights and rely on the
+#'     headlight only.
+#' @param border If \code{TRUE}, a grid will be drawn on top of the surface.
+#' @param creaseAngle a parameter controlling the smoothness of the
+#'     surface.  When it is small, faces at large angles to each other will
+#'     create visible "creases".
+#' @param ... additional arguments for internal drawing routines.
+#' @details
+#'   A VRML scene description file is created, and opened with a browser if
+#'   one is available.
+#'
+#'   VRML is a standard language for describing 3D scenes, and the file
+#'   produced by this function should be portable across all machines
+#'   with a VRML browser.
+#'
+#'   This function is similar to \code{\link{persp}} except it creates a 3D
+#'   scene which can be manipulated with a VRML viewer.
+#' @author Tom Minka
+#' @seealso \code{\link{persp}},\code{\link{vrml.plot3d}}
+#' @examples
+#' #  The Obligatory Mathematical surface.
+#' #  Rotated sinc function.
+#' x <- seq(-10, 10, length= 30)
+#' y <- x
+#' f <- function(x,y) { r <- sqrt(x^2+y^2); 10 * sin(r)/r }
+#' z <- outer(x, y, f)
+#' z[is.na(z)] <- 1
+#' vrml.surface(x,y,z)
+#' vrml.surface(x,y,z,border=T)
+#' @export
 vrml.surface <- function(object,...) UseMethod("vrml.surface")
+
+#' @export
 vrml.surface.loess <- function(object,res=20,
                                xlim,ylim,zlim,clip=T,xlab,ylab,zlab,...) {
   if(length(res) == 1) res <- rep(res,2)
@@ -524,6 +635,8 @@ vrml.surface.loess <- function(object,res=20,
   if(missing(zlab)) zlab <- resp
   vrml.surface.default(x1,x2,z,xlab=xlab,ylab=ylab,zlab=zlab,...)
 }
+
+#' @export
 vrml.surface.default <- function(x,y,z,xlab=NULL,ylab=NULL,zlab=NULL,
                                  col="gray",scale=c(1,1,1),file.name=NULL,
                                  cex.axis=2,light=F,...) {
@@ -555,6 +668,8 @@ vrml.surface.default <- function(x,y,z,xlab=NULL,ylab=NULL,zlab=NULL,
   cat("]}\n",file=vrml.file)
   vrml.close()
 }
+
+#' @export
 vrml.surface.wrl <- function(x,y,z,border=F,
                              creaseAngle=10,...,file=vrml.file) {
   # turn off LOD in the viewer or you will get weird effects
@@ -605,6 +720,8 @@ vrml.surface.wrl <- function(x,y,z,border=F,
         "coordIndex [",t(index),"]\n}}\n",file=file)
   }
 }
+
+
 vrml.array.wrl <- function(m,file=vrml.file) {
   if(is.data.frame(m)) m = data.matrix(m)
   for(i in 1:nrow(m)) {
@@ -639,13 +756,13 @@ vrml.cone.grid <- function() {
 
 
 #' Depict colors geometrically
-#' 
+#'
 #' Plots named colors as points in a three-dimensional cone.
-#' 
+#'
 #' The colors are mapped into Hue-Saturation-Lightness (HSL).  Hue gives the
 #' angle around the cone, Saturation the radial distance from the center line,
 #' and Lightness the height from the base of the cone.
-#' 
+#'
 #' @param col a vector of strings, naming colors.
 #' @param cex a number controlling the size of the points.
 #' @param light If \code{TRUE}, the cone will be surrounded by point light
@@ -657,17 +774,17 @@ vrml.cone.grid <- function() {
 #' @author Tom Minka
 #' @references Rich Franzen's Wheel of Saturation, Intensity, and Hue.
 #' \url{http://home.att.net/~rocq/SIHwheel.html}
-#' 
+#'
 #' Charles Poynton's Color FAQ.
 #' \url{http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html}
 #' @examples
-#' 
+#'
 #' color.cone(YlGnBu.colors(8))
 #' color.cone(YR.colors(16))
 #' color.cone(RYB.colors(7))
 #' color.cone(topo.colors(20))
 #' # reveals how topo.colors is not sequential in lightness
-#' 
+#'
 color.cone <- function(col,cex=2,light=T,...) {
   # convert to HSY
   h = col2hsv(col)

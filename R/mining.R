@@ -298,7 +298,7 @@ merge.hist <- function(x,b=NULL,n=b,trace=T) {
 #' @author Tom Minka
 #' @examples
 #'
-#' x <- c(rnorm(100,-2,0.5),rnorm(100,2,0.5))
+#' x <- c(rnorm(100,-2,0.5), rnorm(100,2,0.5))
 #' b <- seq(-4,4,by=0.25)
 #' bhist(x,b)
 #'
@@ -359,6 +359,19 @@ squash <- function(x,n=1000) {
   tapply(x,f,mean)
 }
 
+
+#' Draw break locations
+#'
+#' Draws lines to indicate break locations.
+#' @param b a numeric vector
+#' @return Uses \code{\link{segments}} to draw thick blue vertical lines on top
+#'   of the current plot, at the given locations.
+#' @author Tom Minka
+#' @seealso
+#'   \code{\link{plot.hclust.breaks}},
+#'   \code{\link{plot.segments.ts}},
+#'   \code{\link{break.kmeans}}
+#' @export
 plot.breaks <- function(b) {
   r <- par("usr")[3:4]
   segments(b,rep(r[1],length(b)), b,rep(r[2],length(b)), col="blue", lwd=2)
@@ -530,7 +543,79 @@ sum.of.squares <- function(x,q) {
   sum(x*x)
 }
 
-# Create a hierarchy by Ward's method
+#' Create a hierarchy by Ward's method
+#'
+#' Produces a hierarchical clustering of one-dimensional data via Ward's method.
+#'
+#' @param x a numerical vector, or a list of vectors.
+#' @param n if x is a vector of cluster means, n is the size of each cluster.
+#' @param s if x is a vector of cluster means, s is the sum of squares in each
+#'     cluster.  only needed if \code{same.var=F}.
+#' @param sortx if \code{sortx=F}, only clusters which are adjacent in \code{x}
+#'     can be merged.  Used by \code{\link{break.ts}}.
+#' @param same.var if \code{same.var=T}, clusters are assumed to have the same
+#'   true variance, otherwise not.  This affects the cost function for merging.
+#' @details Repeatedly merges clusters in order to minimize the clustering cost.
+#'   By default, it is the same as \code{hclust(method="ward")}.
+#'   If \code{same.var=T}, the cost is the sum of squares:
+#'     \deqn{sum_c sum_{i in c} (x_i - m_c)^2}
+#'   The incremental cost of merging clusters ca and cb is
+#'   \deqn{(n_a*n_b)/(n_a+n_b)*(m_a - m_b)^2}
+#'   It prefers to merge clusters which are small and have similar means.
+#'
+#'   If \code{same.var=F}, the cost is the sum of log-variances:
+#'     \deqn{sum_c n_c*log(1/n_c*sum_{i in c} (x_i - m_c)^2)}
+#'   It prefers to merge clusters which are small, have similar means,
+#'   and have similar variances.
+#'
+#'   If \code{x} is a list of vectors, each vector is assumed to be a
+#'   cluster.  \code{n} and \code{s} are computed for each cluster and
+#'   \code{x} is replaced by the cluster means.
+#'   Thus you can say \code{ward(split(x,f))} to cluster the data for different
+#'   factors.
+#'
+#' @return The same type of object returned by \code{\link{hclust}}.
+#' @author Tom Minka
+#' @section Bugs: Because of the adjacency constraint used in implementation,
+#'   the clustering that results
+#'   from \code{sortx=T} and \code{same.var=F} may occasionally be suboptimal.
+#' @seealso
+#'   \code{\link{hclust}},
+#'   \code{\link{plot.hclust.trace}},
+#'   \code{\link{hist.hclust}},
+#'   \code{\link{boxplot.hclust}},
+#'   \code{\link{break.ward}},
+#'   \code{\link{break.ts}},
+#'   \code{\link{merge.factor}}
+#' @examples
+#' x <- c(rnorm(700,-2,1.5),rnorm(300,3,0.5))
+#' hc <- ward(x)
+#' opar <- par(mfrow=c(2,1))
+#' plot.hclust.trace(hc)
+#' hist.hclust(hc,x)
+#' par(opar)
+#'
+#' x <- c(rnorm(700,-2,0.5),rnorm(1000,2.5,1.5),rnorm(500,7,0.1))
+#' hc <- ward(x)
+#' opar <- par(mfrow=c(2,1))
+#' plot.hclust.trace(hc)
+#' hist.hclust(hc,x)
+#' par(opar)
+#'
+#' data(OrchardSprays)
+#' x <- OrchardSprays$decrease
+#' f <- factor(OrchardSprays$treatment)
+#' # shuffle levels
+#' #lev <- levels(OrchardSprays$treatment)
+#' #f <- factor(OrchardSprays$treatment,levels=sample(lev))
+#' hc <- ward(split(x,f))
+#' # is equivalent to:
+#' #n <- tapply(x,f,length)
+#' #m <- tapply(x,f,mean)
+#' #s <- tapply(x,f,var)*n
+#' #hc <- ward(m,n,s)
+#' boxplot.hclust(hc,split(x,f))
+#' @export
 ward <- function(x,n=rep(1,length(x)),s=rep(1,length(x)),
                  sortx=TRUE,same.var=T) {
   if(is.list(x)) {
@@ -595,6 +680,21 @@ ward <- function(x,n=rep(1,length(x)),s=rep(1,length(x)),
   hc
 }
 
+
+#' Plot a merging trace
+#'
+#' Plots the cost of successive merges in a hierarchical clustering
+#' @param h an \code{hclust} object
+#' @param ka vector of the cluster cardinalities to plot
+#' @return
+#'   The trace shows, for each merge, the
+#'   distance of the clusters which were merged.  This is useful for determining
+#'   the appropriate number of clusters.  An interesting number of clusters is one
+#'   that directly precedes a sudden jump in distance.
+#' @author Tom Minka
+#' @seealso
+#'   \code{\link{ward}}, \code{\link{break.ward}}
+#' @export
 plot.hclust.trace <- function(h,k=1:10) {
   g <- c(rev(h$height),0)
   k <- k[k < length(g)]

@@ -1148,7 +1148,7 @@ rtable.formula <- function(formula, data, ...) {
 rtable <- function(object, ...) UseMethod("rtable")
 
 # plots rows of x as traces
-# similar to parallel.plot
+# similar to parallel_plot
 # replacement for dotchart
 # y is a named vector or matrix
 
@@ -1345,7 +1345,7 @@ linechart <- function(y,se=NULL,xlab=NULL,ylab,effects=F,med=F,
 #' @param main title for the plot.
 #' @param ... extra arguments for low-level plotting commands.
 #' @author Tom Minka
-#' @seealso \code{\link{parallel.plot}}
+#' @seealso \code{\link{parallel_plot}}
 labeled.curves <- function(x,y,se=NULL,labels,xtick=names(x),
                            xlab=NULL,ylab,type="o",
                            group,
