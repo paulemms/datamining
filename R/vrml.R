@@ -1,4 +1,4 @@
-# Functions for generating VRML scenes.
+# Functions for generating VRML scenes
 # The *.wrl functions are internal, not meant to be called from outside.
 
 truename <- function(f) {
@@ -158,8 +158,6 @@ vrml.rotation.between <- function(p1,p2) {
     c(axis,vec.angle(p1,p2))
   }
 }
-
-#############################################################################
 
 vrml.viewpoint.wrl <- function(pos,lookat,file=vrml.file) {
   default.orient = cbind(0,0,-1)
@@ -442,9 +440,9 @@ vrml.box <- function(xlim,ylim,zlim,...) {
 #' @examples
 #' data(Housing)
 #' w = pca(HousingT,k=3)
-#' #x = project(HousingT,w)
-#' #plot.new()
-#' #vrml.plot3d(x)
+#' x = project(HousingT,w)
+#' plot.new()
+#' vrml.plot3d(x)
 #' @export
 vrml.plot3d <- function(object, ...) UseMethod("vrml.plot3d")
 

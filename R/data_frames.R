@@ -2,7 +2,7 @@
 
 # put data into the environment of formula
 # from Brian Ripley
-formula.with.data <- function(fmla, data) {
+formula_with_data <- function(fmla, data) {
   if(identical(as.character(fmla[[3]]),".")) {
     # dot must be expanded
     resp = response.var(fmla)
@@ -27,7 +27,7 @@ formula.with.data <- function(fmla, data) {
 #'   ascending order.
 #' @author Tom Minka
 #' @seealso
-#'   \code{\link{sort.cells}}
+#'   \code{\link{sort_cells}}
 #' @examples
 #' data(mtcars)
 #' sort.data.frame(mtcars, "mpg")
@@ -53,18 +53,18 @@ sort.data.frame <- function(df,f=ncol(df),...) {
 #'   \code{\link{sort.data.frame}}
 #' @examples
 #' data(Titanic)
-#' sort.cells(Titanic)
+#' sort_cells(Titanic)
 #' data(HairEyeColor)
-#' sort.cells(HairEyeColor)
+#' sort_cells(HairEyeColor)
 #' @export
-sort.cells <- function(x) {
+sort_cells <- function(x) {
   sort.data.frame(as.data.frame(x))
 }
 
-empty.data.frame <- function(col.names) {
-  if(missing(col.names)) y <- NULL
+empty_data_frame <- function(col_names) {
+  if(missing(col_names)) y <- NULL
   else {
-    y <- sapply(col.names,function(x) NULL)
+    y <- sapply(col_names,function(x) NULL)
   }
   structure(y,class="data.frame")
 }
@@ -108,7 +108,8 @@ rbind_extend <- function(df,df2) {
   x
 }
 
-cbind.extend <- function(df,df2) {
+# not used
+cbind_extend <- function(df,df2) {
   # like cbind.data.frame, but pads with NA until rownames match
   if(is.null(df) || nrow(df) == 0) return(df2)
   if(is.null(df2) || nrow(df2) == 0) return(df)
@@ -195,6 +196,7 @@ predictor.vars <- function(object) {
   }
   predictor.vars(terms(object))
 }
+
 # returns all terms on the rhs, including higher-order terms
 predictor.terms <- function(object) {
   attr(terms(object),"term.labels") # TODO: need a terms.data.frame method for color.plot, stats doesn't have one
@@ -210,24 +212,24 @@ as.data.frame.row <- function(x,row.name="") {
   do.call("data.frame",append(as.list(x),extra.args))
 }
 
-nocheck.data.frame <- function(...,row.names=NULL) {
-  # must be done this way to prevent check.names (bug in data.frame)
-  # example: data.frame(list("a b"=3),check.names=F)
-  do.call("data.frame",append(as.list(...),list(row.names=row.names,check.names=F)))
-}
+# nocheck.data.frame <- function(...,row.names=NULL) {
+#   # must be done this way to prevent check.names (bug in data.frame)
+#   # example: data.frame(list("a b"=3),check.names=F)
+#   do.call("data.frame",append(as.list(...),list(row.names=row.names,check.names=F)))
+# }
 apply.df <- function(x,fun) {
   y = lapply(x,fun)
   if(length(y[[1]]) == length(x[[1]]))
-    nocheck.data.frame(y,row.names=rownames(x),check.names=F)
+    data.frame(y,row.names=rownames(x),check.names=F)
   else
-    nocheck.data.frame(y,check.names=F)
+    data.frame(y,check.names=F)
 }
 
 my.model.frame <- function(...) {
   # bugfix for model.frame - puts response at end
   x = model.frame(...)
   a = attr(x,"terms")
-  x = nocheck.data.frame(c(x[-1],x[1]),check.names=F,row.names=rownames(x))
+  x = data.frame(c(x[-1],x[1]),check.names=F,row.names=rownames(x))
   attr(x,"terms") = a
   x
 }
@@ -258,7 +260,6 @@ RVersionString <- function() {
   paste(ver$major,ver$minor,sep=".")
 }
 
-##############################################################################
 # bug fixes
 
 which.environment <- function(x,...) {
@@ -469,25 +470,25 @@ replaceInNamespace("make.names",make.names)
 #' #' @export
 #' terms.default <- function(x,...) x$terms
 #'
-#' #' @export
-#' terms.data.frame <- function(x,env=parent.frame(),...) {
-#'   fmla <- attr(x,"terms")
-#'   if(is.null(fmla)) {
-#'     # minka: assume the last column is the response
-#'     #nm <- make.names(names(x))
-#'     nm = names(x)
-#'     if(length(nm) > 1) {
-#'       lhs <- nm[length(nm)]
-#'       rhs <- nm[-length(nm)]
-#'     }
-#'     else {
-#'       lhs <- NULL
-#'       rhs <- nm
-#'     }
-#'     fmla <- terms(formula(paste(lhs,"~",paste(rhs,collapse="+")),env=env,...))
-#'   }
-#'   fmla
-#' }
+#' @exportS3Method
+terms.data.frame <- function(x,env=parent.frame(),...) {
+  fmla <- attr(x,"terms")
+  if(is.null(fmla)) {
+    # minka: assume the last column is the response
+    #nm <- make.names(names(x))
+    nm = names(x)
+    if(length(nm) > 1) {
+      lhs <- nm[length(nm)]
+      rhs <- nm[-length(nm)]
+    }
+    else {
+      lhs <- NULL
+      rhs <- nm
+    }
+    fmla <- terms(formula(paste(lhs,"~",paste(rhs,collapse="+")),env=env,...))
+  }
+  fmla
+}
 
 #' #' @export
 #' terms.table <- function(x,...) {
@@ -625,7 +626,6 @@ model.frame.nnet <- model.frame.glm
 # missing from modreg
 model.frame.loess <- model.frame.glm
 
-#############################################################################
 # bugfix
 
 if(compareVersion(RVersionString(),"1.9.0") < 0) {
@@ -724,7 +724,6 @@ replaceInNamespace("loess",my.loess)
 environment(my.predict.loess) = environment(loess)
 #assignInNamespace("predict.loess",my.predict.loess,environment(loess))
 
-##############################################################################
 # bug fix
 
 # minka: added `key' and `main' arguments
@@ -819,7 +818,6 @@ my.filled.contour <-
   }
 replaceInNamespace("filled.contour",my.filled.contour)
 
-##############################################################################
 
 # Routines for contingency tables
 # Tom Minka
@@ -959,9 +957,6 @@ indep.fit <- function(x) {
   loglin(x, as.list(1:length(dim(x))), fit = TRUE, print = FALSE)$fit
 }
 
-# returns top k associations in table x
-# uses sort.cells, sort.data.frame, rbind.extend
-
 
 #' Associations in a contingency table
 #'
@@ -1007,13 +1002,13 @@ mine.associations <- function(x,top=10,targets=NULL,z=1) {
   not.targets <- setdiff(1:nd, targets)
 
   # create a data frame with 0 rows
-  res <- empty.data.frame(c("Lift",dn))
+  res <- empty_data_frame(c("Lift",dn))
   # loop rows
   for(i in targets) {
     predictors <- c(not.targets, targets[targets > i])
     for(j in predictors) {
       y <- margin.table(x, c(i,j))
-      df <- sort.cells((y - z*sqrt(y))/(indep.fit(y)+eps))
+      df <- sort_cells((y - z*sqrt(y))/(indep.fit(y)+eps))
       names(df)[3] <- "Lift"
       # take top k lifts
       if(nrow(df) > top) df <- df[nrow(df)+1-(top:1),]

@@ -465,6 +465,7 @@ map.vector <- function(m,x,main="",nlevels=NULL,key=T,warn=T,
   invisible(breaks)
 }
 
+#' @export
 mosaicplot <- function(x, ...) UseMethod("mosaicplot")
 
 ### Changes by MM:
@@ -483,6 +484,7 @@ mosaicplot <- function(x, ...) UseMethod("mosaicplot")
 # adj cannot be a vector
 # draw border of polygon separately, to get line style.
 
+#' @export
 mosaicplot.default <-
   function(X, main = "", xlab = NULL, ylab = NULL, sort = NULL, space = NULL,
            dir = NULL, color = FALSE, shade = FALSE, margin = NULL,

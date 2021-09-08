@@ -1,5 +1,4 @@
 # Routines for manipulating colors and making color plots
-# Tom Minka
 
 
 #' Color schemes
@@ -62,12 +61,12 @@
 #' @examples
 #'
 #' data(Housing)
-#' #color.plot(Price ~ Rooms + Low.Status, Housing, bg=gray(0.5),
-#' #           color.palette=YlGnBu.colors)
-#' #color.plot(Price ~ Rooms + Low.Status, Housing, bg=gray(0.5),
-#' #            color.palette=YR.colors)
-#' #color.plot(Price ~ Rooms + Low.Status, Housing, bg=gray(0.5),
-#' #            color.palette=RYB.colors,nlevels=5)
+#' color.plot(Price ~ Rooms + Low.Status, Housing, bg=gray(0.5),
+#'           color.palette=YlGnBu.colors)
+#' color.plot(Price ~ Rooms + Low.Status, Housing, bg=gray(0.5),
+#'             color.palette=YR.colors)
+#' color.plot(Price ~ Rooms + Low.Status, Housing, bg=gray(0.5),
+#'             color.palette=RYB.colors,nlevels=5)
 #'
 #' # also see examples for color.cone
 #' @export
@@ -345,7 +344,6 @@ sequential.pch <- c(20,41,4,1,38,35,11,19)
 sequential.pch.paper <- c(45,41,4,1,38,35,11,19)
 
 
-
 #' Plot subgroups as colored points
 #'
 #' Like \code{\link{plot}} and \code{\link{text.plot}} but colors according to
@@ -409,6 +407,7 @@ sequential.pch.paper <- c(45,41,4,1,38,35,11,19)
 #'
 #' @export
 color.plot <- function(object, ...) UseMethod("color.plot")
+
 #' @export
 color.plot.formula <- function(formula,data=parent.frame(),...) {
   x <- model.frame.default(formula,data,na.action=na.pass)
@@ -446,16 +445,16 @@ color.plot.formula <- function(formula,data=parent.frame(),...) {
 #' @examples
 #'
 #' data(iris)
-#' #color.plot(iris) # ERROR
-#' #color.plot(Species ~ Petal.Length + Petal.Width, iris)
+#' color.plot(iris)
+#' color.plot(Species ~ Petal.Length + Petal.Width, iris)
 #' #color.plot(Species ~ Petal.Length, iris)
 #' #color.plot(Species ~ Petal.Length, iris,jitter=T)
-#' #color.plot(iris, col=1)
-#' #color.plot(iris, col=c(1,2))
+#' color.plot(iris, col=1)
+#' color.plot(iris, col=c(1,2))
 #'
 #' data(state)
 #' x <- data.frame(state.x77)
-#' #color.plot(Murder ~ Frost + Illiteracy, x, labels=T, cex=0.5)
+#' color.plot(Murder ~ Frost + Illiteracy, x, labels=T, cex=0.5)
 #'
 #' @export
 color.plot.data.frame <- function(x,z,zlab=NULL,xlab=NULL,ylab=NULL,labels=F,...) {
@@ -477,6 +476,8 @@ color.plot.data.frame <- function(x,z,zlab=NULL,xlab=NULL,ylab=NULL,labels=F,...
   color.plot.default(x[[pred[1]]],x[[pred[2]]],z,labels=labels,
                      xlab=xlab,ylab=ylab,zlab=zlab,...)
 }
+
+#' @export
 color.plot.default <- function(x,y,z,labels=NULL,data=parent.frame(),
                                xlab=NULL,ylab=NULL,zlab=NULL,main="",
                                xlim=NULL,ylim=NULL,
@@ -729,7 +730,6 @@ text_plot.default <- function(x,y,labels=NULL,xlab,ylab,xlim=NULL,ylim=NULL,
   }
 }
 # test: text.plot(runif(10),runif(10),rep("a",10))
-
 
 
 #' Contour plot of a regression surface

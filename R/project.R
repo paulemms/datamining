@@ -1,4 +1,4 @@
-
+# functions to reduce dimensionality
 
 #' Project data into fewer dimensions
 #'
@@ -18,12 +18,13 @@
 #'   \code{\link{pca}}, \code{\link{projection}}, \code{\link{plot.axes}}
 #' @examples
 #' data(iris)
-#' #w = projection(iris, k=2)
+#' w = projection(iris, k=2)
 #' # w only involves the continuous attributes
 #' # the new variables are h1 and h2
-#' #x = project(iris, w)
-#' #color.plot(x)
-#' #plot.axes(w)
+#' x = project(iris, w)
+#' # in RStudio use dev.new()
+#' color.plot(x)
+#' plot.axes(w)
 #' @export
 project <- function(x,w) {
   pred <- rownames(w)
@@ -79,8 +80,9 @@ standardize.projection <- function(w) {
 #' @examples
 #' data(Housing)
 #' w <- pca(HousingT, k=2)
-#' #plot(project(HousingT, w), asp=1)
-#' #plot.axes(w)
+#' dev.new()
+#' plot(project(HousingT, w), asp=1)
+#' plot.axes(w)
 #' @export
 pca <- function(x,k=1,...) {
   x <- as.data.frame(x)
@@ -219,7 +221,8 @@ pca2 <- function(x,k=1) {
 #' x2 <- 2*runif(200)-1
 #' y <- x1^2/2 + x2^2
 #' x <- data.frame(x1,x2)
-#' #color.plot(x[,1],x[,2],y)
+#' # in RStudio use dev.new()
+#' color.plot(x[,1],x[,2],y)
 #' w = projection(x,y)
 #' abline(0,w[2]/w[1],col=4)
 #' @export
@@ -714,6 +717,7 @@ identify.formula <- function(fmla,data=parent.frame(),...) {
   identify.data.frame(x,...)
 }
 
+#' @exportS3Method
 scale.data.frame <- function(x,center=T,scale=T,exclude.response=F,...) {
   # scales the numeric columns, leaving rest alone
   a = attr(x,"terms")
@@ -732,6 +736,8 @@ scale.data.frame <- function(x,center=T,scale=T,exclude.response=F,...) {
   #attr(x,"terms") = a
   x
 }
+
+#' @exportS3Method
 hist.data.frame <- function(x,breaks,layout,col="tomato",...) {
   if(missing(layout)) layout <- auto.layout(length(x))
   opar <- par(mfrow=layout)
@@ -873,6 +879,7 @@ nchoosek <- function(n,k) {
   }
   r
 }
+
 simple.projection <- function(d,i) {
   if(length(d) == 1) {
     d.names <- as.character(1:d)
@@ -891,7 +898,7 @@ score.simple.stats <- function(va,vs,ns,k=1,type="mv",...) {
   }
   pred <- colnames(va)
   f <- nchoosek(length(pred),k)
-  r <- empty.data.frame(c(paste("Var",1:k,sep=""),"Score"))
+  r <- empty_data_frame(c(paste("Var",1:k,sep=""),"Score"))
   for(i in 1:length(f)) {
     p <- pred[f[[i]]]
     w <- simple.projection(pred,p)

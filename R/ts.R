@@ -64,6 +64,7 @@ plot.segments.ts <- function(x,b,lwd=2,...) {
 #' plot(x,type="l")
 #' plot.breaks(b)
 #'
+#' @export
 break.ts <- function(x,n=2,trace=T,same.var=T,...) {
   h <- ward(as.numeric(x),sortx=F,same.var=same.var)
   q <- cutree(h,n)

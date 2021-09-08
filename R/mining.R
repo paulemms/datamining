@@ -73,7 +73,6 @@ banking.fcn <- function(dx,dy,asp) {
 #' Uses Cleveland's "banking to 45" rule to determine an optimal aspect ratio
 #' for a plot.
 #'
-#'
 #' @param x,y numeric vectors of coordinates defining a continuous curve, or
 #' multiple curves delimited by \code{NA}s.  Alternatively, \code{x} can be a
 #' list of two vectors.
@@ -170,7 +169,6 @@ reset.aspect <- function() {
 
 
 # histograms with confidence intervals and bin merging
-# Tom Minka 9/19/01
 
 bhist.stats <- function(x,b) {
   if(length(b)==1) {
@@ -591,6 +589,7 @@ sum.of.squares <- function(x,q) {
 #' x <- c(rnorm(700,-2,1.5),rnorm(300,3,0.5))
 #' hc <- ward(x)
 #' opar <- par(mfrow=c(2,1))
+#' # use dev.new() in RStudio
 #' plot.hclust.trace(hc)
 #' hist.hclust(hc,x)
 #' par(opar)

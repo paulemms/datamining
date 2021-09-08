@@ -1,4 +1,3 @@
-##############################################################################
 # glm stuff
 
 predict.frame <- function(object) {
@@ -175,7 +174,7 @@ logistic <- function(formula,data,...) {
   #environment(formula) = sys.frame(sys.nframe())
   control = glm.control(maxit=30,trace=F)
   # can't use control else update will fail
-  glm(formula.with.data(formula,data),family=binomial,...)
+  glm(formula_with_data(formula,data),family=binomial,...)
   #glm(formula,data,family=binomial,control=control,...)
 }
 
@@ -985,7 +984,6 @@ effects.plot <- function(object,se=F) {
   boxplot(res, at=nvar+1, add=T)
 }
 
-#############################################################################
 
 as.rtable <- function(a,resp="Response",check.names=T) {
   if(check.names) resp = make.names(resp)
@@ -1190,13 +1188,13 @@ rtable <- function(object, ...) UseMethod("rtable")
 #' data(HairEyeColor)
 #' x <- margin.table(HairEyeColor,c(1,2))
 #' dimOrdered(x) = F
-#' # mosaicplot(x)
+#' mosaicplot(x)
 #' x = t(x)
 #' col = c("brown","blue","red","green")
 #' linechart(row.probs(x),color.pal=col)
 #' linechart(row.probs(x,se=T),color.pal=col)
 #' linechart(row.probs(x,se=T),jitter=0.02,color.pal=col)
-#' # mosaicplot(x)
+#' mosaicplot(x)
 #' linechart(row.probs(t(x),se=T))
 #'
 #' data(blood)
@@ -1206,7 +1204,7 @@ rtable <- function(object, ...) UseMethod("rtable")
 #' data(antacids)
 #' dimOrdered(antacids) = F
 #' linechart(row.probs(antacids,se=T))
-#' # mosaicplot(t(antacids))
+#' mosaicplot(t(antacids))
 #'
 linechart <- function(y,se=NULL,xlab=NULL,ylab,effects=F,med=F,
                       xscale=c("equal","linear","none"),...) {
@@ -1290,7 +1288,7 @@ linechart <- function(y,se=NULL,xlab=NULL,ylab,effects=F,med=F,
     se = t(se)
   }
   names(x) = colnames(y)
-  labeled.curves(x,t(y),se,xlab=xlab,ylab=ylab,...)
+  labeled_curves(x,t(y),se,xlab=xlab,ylab=ylab,...)
 }
 
 
@@ -1346,7 +1344,8 @@ linechart <- function(y,se=NULL,xlab=NULL,ylab,effects=F,med=F,
 #' @param ... extra arguments for low-level plotting commands.
 #' @author Tom Minka
 #' @seealso \code{\link{parallel_plot}}
-labeled.curves <- function(x,y,se=NULL,labels,xtick=names(x),
+#' @export
+labeled_curves <- function(x,y,se=NULL,labels,xtick=names(x),
                            xlab=NULL,ylab,type="o",
                            group,
                            color.palette=default.colors(6),col,

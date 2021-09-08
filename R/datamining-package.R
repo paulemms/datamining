@@ -17,10 +17,11 @@
 #' @examples
 #'
 #' data(States)
-#' #hist(States) # ERROR
+#' dev.new()
+#' hist(States)
 #' hist(StatesT)
 #' w <- pca(StatesT, 2)
-#' #text_plot(project(StatesT,w),asp=1,cex=.6) # ERROR
+#' text_plot(project(StatesT, w), asp=1, cex=.6)
 #' plot.axes(w)
 #'
 NULL

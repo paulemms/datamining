@@ -1,4 +1,4 @@
-##############################################################################
+# functions to convert colour representations
 
 rgb2name <- function(r,g,b) {
   if(missing(g)) {
@@ -446,6 +446,7 @@ reorder.rows <- function(y,i) {
     y
   }
 }
+
 reorder.cols <- function(y,i) {
   # indexes a matrix while preserving attributes
   if(is.na(ncol(y))) {
@@ -458,7 +459,6 @@ reorder.cols <- function(y,i) {
   }
 }
 
-##############################################################################
 # Graphics tools
 
 auto.layout <- function(len,asp=1) {
@@ -538,7 +538,6 @@ auto.mar <- function(main="",sub="",xlab="x",ylab="y",axes=T,
   mar
 }
 
-##############################################################################
 # matlab compatibility
 
 rep.mat <- function(x,n,m) {

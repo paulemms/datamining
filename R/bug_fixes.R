@@ -1,4 +1,3 @@
-############################################################################
 # bug fixes
 
 replaceInNamespace <- function(name,value) {
@@ -306,7 +305,6 @@ environment(acf) = env
 formals(ccf)$na.action = na.pass
 environment(ccf) = env
 
-##############################################################################
 # new functions
 # also see cluster.r
 
