@@ -1,4 +1,4 @@
-# data.frame codes
+# data.frame code
 
 # put data into the environment of formula
 # from Brian Ripley
