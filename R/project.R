@@ -4,7 +4,7 @@
 #'
 #' Reduces the dimensionality of a data set.
 #'
-#' @param x a data.frame
+#' @param x a data frame
 #' @param w a matrix with named rows and columns
 #' @details
 #'   Each column of \code{w} specifies a new variable, which is to be
