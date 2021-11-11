@@ -1717,23 +1717,53 @@ predict_plot.formula <- function(formula,data=parent.frame(),...) {
 }
 
 
-expand.cross <- function(object) {
-  resp <- response.var(object)
-  pred <- predictor.vars(object)
-  # quadratic terms only
-  pred2 <- c()
-  for(i in pred) {
-    for(j in pred) {
-      if(match(i,pred) < match(j,pred)) pred2 = c(pred2,paste(i,j,sep=":"))
+# only used once in lab 10
+# expand.cross <- function(object) {
+#   resp <- response.var(object)
+#   pred <- predictor.vars(object)
+#   # quadratic terms only
+#   pred2 <- c()
+#   for(i in pred) {
+#     for(j in pred) {
+#       if(match(i,pred) < match(j,pred)) pred2 = c(pred2,paste(i,j,sep=":"))
+#     }
+#   }
+#   pred = c(pred,pred2)
+#   formula(paste(resp,"~",paste(pred,collapse="+")))
+# }
+# step.up <- function(object,scope=expand.cross(object)) {
+#   step(object,list(upper=scope,lower=formula(object)))
+# }
+
+
+#' Contour plot matrix
+#'
+#' @examples
+#' fit <- lm(Fertility ~ ., data=swiss)
+#' interact.plot(fit)
+#' @export
+interact.plot <- function(object, ...) UseMethod("interact.plot")
+
+#' @export
+interact.plot.lm <- function(object,data,partial=F,main=NULL,...) {
+  if(!partial) {
+    if(missing(data)) {
+      res <- residual.frame(object)
+    } else {
+      res <- residual.frame(object,data)
     }
+    cat("plotting residuals\n")
+    if(is.null(main)) main = "Residuals"
+    interact.plot.data.frame(res,highlight=predictor.terms(object),main=main,...)
+  } else {
+    if(missing(data)) data <- model.frame(object)
+    else data = my.model.frame(formula(paste(response.var(object),"~.")),data)
+    cat("plotting partial residuals\n")
+    interact.plot.data.frame(data,partial=object,main=main,...)
   }
-  pred = c(pred,pred2)
-  formula(paste(resp,"~",paste(pred,collapse="+")))
-}
-step.up <- function(object,scope=expand.cross(object)) {
-  step(object,list(upper=scope,lower=formula(object)))
 }
 
+#' @export
 interact.plot.data.frame <- function(x,ypred,partial=NULL,highlight,span=0.75,
                                      scol="red",slwd=2,type=c("*",":"),
                                      xaxt="n",yaxt="n",se=T,
@@ -1813,27 +1843,6 @@ interact.plot.data.frame <- function(x,ypred,partial=NULL,highlight,span=0.75,
         }
       }
     }
-  }
-}
-
-interact.plot <- function(object, ...) UseMethod("interact.plot")
-
-
-interact.plot.lm <- function(object,data,partial=F,main=NULL,...) {
-  if(!partial) {
-    if(missing(data)) {
-      res <- residual.frame(object)
-    } else {
-      res <- residual.frame(object,data)
-    }
-    cat("plotting residuals\n")
-    if(is.null(main)) main = "Residuals"
-    interact.plot.data.frame(res,highlight=predictor.terms(object),main=main,...)
-  } else {
-    if(missing(data)) data <- model.frame(object)
-    else data = my.model.frame(formula(paste(response.var(object),"~.")),data)
-    cat("plotting partial residuals\n")
-    interact.plot.data.frame(data,partial=object,main=main,...)
   }
 }
 

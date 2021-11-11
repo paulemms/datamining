@@ -56,12 +56,23 @@ make.ordered.factors <- function(x,exclude=NULL) {
   as.data.frame(x)
 }
 
-make.numeric.data.frame <- function(data,exclude=NULL,warn=F) {
-  i = !sapply(data,is.numeric)
-  i[exclude] = FALSE
+
+#' Convert data frame columns to numeric
+#'
+#' Factors are also converted to numeric.
+#' @param data data.frame
+#' @param exclude columns to exclude
+#' @param warn allow warnings
+#'
+#' @export
+#' @examples
+#' make_numeric_data_frame(iris)
+make_numeric_data_frame <- function(data, exclude=NULL, warn=FALSE) {
+  i <- !sapply(data, is.numeric)
+  i[exclude] <- FALSE
   if(any(i)) {
     if(warn) warning("converting factors to numeric")
-    data[i] = apply.df(data[i],as.numeric)
+    data[i] <- apply.df(data[i], as.numeric)
   }
   data
 }
@@ -72,7 +83,7 @@ knn.model <- function(formula,data=NULL,k=1) {
   if(is.null(data)) data <- formula
   else data <- model.frame(formula,data)
   pred <- predictor.vars(data)
-  data[pred] = make.numeric.data.frame(data[pred],warn=T)
+  data[pred] = make_numeric_data_frame(data[pred],warn=T)
   object <- list(terms=terms(data),data=data,k=k)
   class(object) <- "knn"
   object$scale <- sd(data[pred])
@@ -99,7 +110,7 @@ predict.knn <- function(object,test,k,type=c("class","vector","response"),...) {
   train <- object$data
   resp <- response.var(object)
   pred <- predictor.vars(object)
-  test[pred] = make.numeric.data.frame(test[pred])
+  test[pred] = make_numeric_data_frame(test[pred])
   s <- object$scale
   # subtracting mean is irrelevant
   x <- scale(train[pred],center=F,scale=s)
@@ -178,7 +189,7 @@ test.k.knn <- function(object,test,ks=1:50) {
   train <- object$data
   resp <- response.var(object)
   pred <- predictor.vars(object)
-  test[pred] = make.numeric.data.frame(test[pred])
+  test[pred] = make_numeric_data_frame(test[pred])
   s <- object$scale
   x <- scale(train[pred],center=F,scale=s)
   xt = scale(test[pred],center=F,scale=s)
@@ -324,7 +335,7 @@ gcl.model <- function(formula,data,equal.mean=F,
   if(is.null(data)) data <- formula
   else data <- model.frame(formula,data)
   pred = predictor.vars(data)
-  data[pred] = make.numeric.data.frame(data[pred],warn=T)
+  data[pred] = make_numeric_data_frame(data[pred],warn=T)
   y = data[[response.var(data)]]
   m = v = p = bias = list()
   for(lev in levels(y)) {
@@ -346,7 +357,7 @@ gcl.model <- function(formula,data,equal.mean=F,
 }
 predict.gcl <- function(object,test,type=c("class","response"),se=F) {
   pred <- predictor.vars(object)
-  test[pred] = make.numeric.data.frame(test[pred])
+  test[pred] = make_numeric_data_frame(test[pred])
   classes = names(object$m)
   e = array(0,c(nrow(test),length(classes)),list(rownames(test),classes))
   for(lev in classes) {

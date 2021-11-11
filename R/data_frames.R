@@ -61,12 +61,16 @@ sort_cells <- function(x) {
   sort.data.frame(as.data.frame(x))
 }
 
+# in R 4.1.1 can use list2DF - only 2 refs here but best leave
+# e.g. list2DF(list(a = character(0), b = character(0)))
+# use list2DF if you want the data.frame populated
 empty_data_frame <- function(col_names) {
-  if(missing(col_names)) y <- NULL
+  stopifnot(is.character(col_names))
+  if (missing(col_names)) y <- list()
   else {
-    y <- sapply(col_names,function(x) NULL)
+    y <- sapply(col_names, function(x) NULL)
   }
-  structure(y,class="data.frame")
+  structure(y, class="data.frame")
 }
 
 rbind_extend2 <- function(df,df2) {
@@ -138,6 +142,7 @@ cbind_extend <- function(df,df2) {
 #' # response_var(~ b + c) # gives error
 #' response_var(Height + Volume ~ Girth)
 #' response_var(log(Volume) ~ Girth)
+#' @export
 response_var <- function(obj) {
   f <- formula(obj)
   if(length(f) < 3) stop("no response")
@@ -179,6 +184,33 @@ response.var <- function(object) {
   response.var(terms(object))
 }
 
+#' Variables out of which the predictors are constructed
+#'
+#' If the object inherits from a `data.frame` then it is assumed the
+#' response is in the first column.
+#' @param object that inherits from a data.frame or terms object
+#'
+#' @return vector of predicts
+#' @export
+#'
+#' @examples
+#' fit <- lm(mpg ~ .^2, data=mtcars)
+#' predictor_vars(fit)
+#' predictor_vars(mtcars)
+predictor_vars <- function(object) {
+  if(inherits(object, "terms")) {
+    a <- attributes(object)
+    pred = rownames(a$factors)[apply(a$factors, 1, any)]
+    return(pred)
+  }
+  if(inherits(object, "data.frame") && is.null(attr(object, "terms"))) {
+    # shortcut to avoid make.names
+    return(names(object)[-1])
+  }
+  predictor.vars(terms(object))
+}
+
+
 # returns the variables out of which the predictors are constructed
 predictor.vars <- function(object) {
   if(inherits(object, "terms")) {
@@ -199,7 +231,7 @@ predictor.vars <- function(object) {
 
 # returns all terms on the rhs, including higher-order terms
 predictor.terms <- function(object) {
-  attr(terms(object),"term.labels") # TODO: need a terms.data.frame method for color.plot, stats doesn't have one
+  attr(terms(object),"term.labels")
 }
 
 as.data.frame.col <- function(x,n="V1") {
@@ -217,12 +249,14 @@ as.data.frame.row <- function(x,row.name="") {
 #   # example: data.frame(list("a b"=3),check.names=F)
 #   do.call("data.frame",append(as.list(...),list(row.names=row.names,check.names=F)))
 # }
-apply.df <- function(x,fun) {
-  y = lapply(x,fun)
+
+apply.df <- function(x, fun) {
+  # apply a function to a data.frame and return a data.frame
+  y <- lapply(x, fun)
   if(length(y[[1]]) == length(x[[1]]))
-    data.frame(y,row.names=rownames(x),check.names=F)
+    data.frame(y, row.names=rownames(x), check.names=FALSE)
   else
-    data.frame(y,check.names=F)
+    data.frame(y, check.names=FALSE)
 }
 
 my.model.frame <- function(...) {
@@ -1003,6 +1037,7 @@ mine.associations <- function(x,top=10,targets=NULL,z=1) {
 
   # create a data frame with 0 rows
   res <- empty_data_frame(c("Lift",dn))
+
   # loop rows
   for(i in targets) {
     predictors <- c(not.targets, targets[targets > i])

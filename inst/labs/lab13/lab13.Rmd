@@ -1,0 +1,81 @@
+---
+title: 'Lab 13: '
+output: html_notebook
+---
+
+# Introduction
+
+This is Lab 13 on Data Mining. 
+
+First we load the `datamining` package and the data for the lab.
+```{r warning=FALSE}
+devtools::load_all()
+load('Credit.rda')
+```
+
+```{r initial_manipulation}
+x.tr <- x[i.tr,]
+x.te <- x[i.te,]
+attr(x.te, "terms") = NULL
+nx.tr <- make_numeric_data_frame(x.tr, "Class", warn=FALSE)
+nx.te <- make_numeric_data_frame(x.te, "Class", warn=FALSE)
+
+fmla =
+  Class ~ Checking.200 + CheckingNone + Months + History + PurposeUsed.car + 
+    PurposeOther + PurposeFurniture.equipment + PurposeRadio.TV + 
+    PurposeRepairs + PurposeBusiness + 
+    StatusMale.single + StatusMale.married + GuarantorCo.applicant + 
+    Other.plansStores + Foreign
+```
+
+# The data set
+
+9. [he dataset is the same as lab 12, with training data in x.tr and test data in x.te. ‘lwo
+other matrices, nx.tr and nx.te, have the predictors numerically coded, for use with logistic
+regression. You want to predict Class.
+Mlusclassification rates
+6. ‘These are the proportions of good and bad loans in the test set:
+Bad Good
+0.316 0.684
+What is the misclassification rate of a classifier which always reports “Good”? What is the
+misclassification rate of a classifier which always reports “Bad”? The minimum of these two is
+the baseline rate. Any classifier which does worse than the baseline is essentially worthless.
+7. As in the last lab, construct a pruned classification tree and a k-nearest-neighbor classiher with
+k=6. What are their misclassification rates on the test set?
+8. Construct a linear classifer on the all-numeric version of the training set. What is its misclas-
+sification rate on the test set?
+9. ‘he variable fmla contains a formula with the most important predictors. Use quadratic expan-
+sion on this formula to build a quadratic classifier. What is its misclassification rate on the test
+set? Of the four classifiers, which do better than baseline?
+Mlusclassification costs
+10. ‘The variable costs gives the cost to the bank of different types of misclassification:
+predicted
+
+truth Bad Good
+Bad 0 5
+Good 1 0
+What is the average cost (total cost divided by the test set size) of a classifier which always reports
+“Good”? What is the average cost of a classifier which always reports “Bad”? The minimum of
+these two is the baseline cost.
+11. ‘To minimize cost, the bank should say “Good” only when the probability of “Good” exceeds
+5/6. For each of the four classifiers, compute the average cost of this policy on the test set.
+Which are below baseline?
+12. You can now get checked off. Save all of your results for the homework.
+Logistic regression ‘lhe logistic function is similar to tree:
+fit = logistic(<formula>,<data>)
+summary (fit)
+Deviance and misclassification rate are also the same:
+deviance (fit,<data>,rate=T)
+misclass(fit,<data>,rate=T)
+Confusion matrix A confusion matrix cross-classines the predictions of a model and the true
+responses. The model says “Yes” when the probability of “Yes” exceeds p (which is 0.5 by default).
+confusion (<model>,<data>,p)
+It costs is a corresponding table of costs, this will compute the total cost of the classifier on the data
+set:
+sum (confusion (<model>,<data>,p)*costs)
+(Juadratic expansion ‘lo create a formula with quadratic terms added, use one of
+expand. quadratic (fit)
+expand. quadratic (<data>)
+expand. quadratic (<formula>)
+(Just like expand.cross from lab 10.) expand. quadratic assumes all predictors are numeric. The
+resulting formula may be very big and cause R to run slowly.

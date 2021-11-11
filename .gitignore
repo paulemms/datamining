@@ -3,4 +3,5 @@
 .RData
 .Ruserdata
 man/*
-Rplots.pdf
+Rplots*.pdf
+inst/original_src

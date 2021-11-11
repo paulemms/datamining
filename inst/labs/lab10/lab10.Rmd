@@ -1,0 +1,126 @@
+---
+title: 'Lab 10: Interaction terms in Linear Regression'
+output: html_notebook
+---
+
+# Introduction
+
+This is Lab 10 on Data Mining. It describes how one can use interaction terms in linear regression.
+
+First we load the `datamining` package and the data for the lab.
+```{r warning=FALSE}
+devtools::load_all()
+load('lab9.rda')
+```
+
+# The data set
+
+The dataset is the same as lab 9. As before, we transform the variable `Sold.4` and standardize all variables to mean zero and variance one. The
+data.frame `xx` holds the standardised variables.
+
+```{r standardising}
+xx <- x[, c(ncol(x), 1:ncol(x)-1)]
+xx$Sold.4 <- log(xx$Sold.4)
+xx <- as.data.frame(scale(xx))
+hist(xx$Sold.4)
+```
+
+# Selecting interaction terms
+First we make a linear model to predict `Sold.4` from all
+product prices.
+
+```{r fill_all}
+fit <- lm(Sold.4 ~ ., data=xx)
+summary(fit)
+```
+We use `step` to automatically select important interaction terms whilst keeping
+all the single variable terms in the model. Unimportant interaction terms are
+automatically dropped.
+
+A regression formula is an object in R and can be manipulated programmatically.
+For example, we can extract formula used in the linear regression above and
+modify it to include all the interaction terms.
+
+```{r regression_formula}
+message('Original formula')
+linear_fm <- formula(terms(fit))
+print(linear_fm)
+message('Updated formula')
+update.formula(linear_fm, Sold.4 ~ .^2)
+```
+
+We use the updated formula in the `scope` argument of the `step` function. The
+function starts with the full `fit` model and then selectively adds
+interactions terms. The summary shows the final model.
+
+```{r add_interaction_terms}
+fit_int <- step(fit, scope = list(upper=~.^2, lower=~.), trace = 0)
+summary(fit_int)
+```
+
+You can set `trace = 1` in the function call to see intermediate output from
+`step`. There are six bilinear terms.
+
+A plot of each term against its partial residuals is shown below.
+
+```{r partial_residuals_fit_int}
+predict_plot(fit_int, partial = TRUE)
+```
+The least important bilinear term is `Price.8:Price.11`. The terms
+`Price.8:Price.9` and `Price.3:Price.10` have greater importance than either of
+their individual predictors.
+
+# Visualization
+
+A contour plot matrix shows the contribution of each interaction term to the model.
+
+```{r interact_plot}
+interact.plot(fit_int)
+```
+Find the ‘strongest’ and ‘weakest’ interactions that you identified earlier. Do
+the contours agree with that ranking ?
+
+Slice plots show the type of the interaction. First we examine the interaction `Price.8:Price.11`.
+
+```{r residual_frame}
+r <- partial.residual.frame(fit_int, "Price.8*Price.11")
+head(r)
+```
+
+This sets `r` to a matrix with three columns: `Price.8`, `Price.11`, and
+`Sold.4` (`Sold.4` is the partial residuals for a model with `Price.8` and
+`Price.11` completely excluded). Notice that you put `*` between the variable
+names, not `:`.
+
+```{r slice_plot}
+color.plot(smooth(Sold.4 ~ Price.8 + Price.11, r), n=8)
+slices(Sold.4 ~ Price.8 | Price.11, r)
+predict_plot(Sold.4 ~ Price.8 | Price.11, r, n=4)
+```
+
+10. Make slice plots of the top 4 interactions. They should show the type of each interaction. (As a
+check, the contour plot of each interaction should be the same as in the plot above.) For each,
+you have to decide which is the better variable to slice on.
+
+Automatic formulas If x is a matrix, then formulas for use with 1m can be generated via
+formula(x)
+expand.cross (x)
+The first type has the last column as response and the rest as predictors. ‘The second type also has
+all cross terms.
+Adding bilinear terms If fit is a linear model.
+fit2 = step.up(fit)
+will try adding all possible bilinear terms and use AIC to select the best.
+Contour plot matrix interact.plot is invoked similarly to predict .plot. If fit is a model and
+x iS 9 matrix:
+interact .plot(x)
+interact .plot (fit)
+interact .plot(fit,partial=T)
+The first makes all pairwise contour plots of the response, the second plots residuals, the third plots
+partial residuals.
+
+Slice plots To extract partial residuals for an interaction term:
+
+ Plots are made in the usual way:
+color.plot(smooth(Sold.4”Price.8+Price.11,r) ,n=8)
+slices(Sold.4~Price.8|Price.11,r)
+predict.plot(Sold.4~Price.8|Price.11,r,n=4)

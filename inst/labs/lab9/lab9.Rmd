@@ -1,6 +1,8 @@
 ---
 title: 'Lab 9: Linear Regression'
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 
 # Introduction
@@ -8,8 +10,9 @@ output: html_notebook
 This is Lab 9 on Data Mining. It is a simple introduction to the practicalities of linear regression.
 
 First we load the `datamining` package and the data for the lab.
+
 ```{r warning=FALSE}
-devtools::load_all()
+library(datamining)
 load('lab9.rda')
 ```
 
@@ -17,27 +20,26 @@ load('lab9.rda')
 
 The data set is 196 weeks of grocery sales for a store. The variables are:
 
-| Variable | Description |
-| --- | --- |
-| Price.1 | DOLE PINEAPPLE ORANG 64 OZ |
-| Price.2 | FIVE ALIVE CTRUS BEV 64 OZ
-| Price.3 | HH FRUIT PUNCH 64 OZ
-| Price.4 | HH ORANGE JUICE 64 OZ
-| Price.5 | MIN MAID O J CALCIUM 64 OZ
-| Price.6 | MIN MAID O J PLASTIC 96 OZ
-| Price.7 |  MM PULP FREE OJ 64 OZ
-| Price.8 | SUNNY DELIGHT FLA CI 64 OZ
-| Price.9 | TREE FRESH O J REG 64 OZ
-| Price.10 | TROP PURE PRM HOMEST 64 OZ
-| Price.l1 | TROP SB HOMESTYLE OJ 64 OZ
-| Sold.4 | Number of units sold for HH ORANGE JUICE 64 OZ
+| Variable | Description                                    |
+|----------|------------------------------------------------|
+| Price.1  | DOLE PINEAPPLE ORANG 64 OZ                     |
+| Price.2  | FIVE ALIVE CTRUS BEV 64 OZ                     |
+| Price.3  | HH FRUIT PUNCH 64 OZ                           |
+| Price.4  | HH ORANGE JUICE 64 OZ                          |
+| Price.5  | MIN MAID O J CALCIUM 64 OZ                     |
+| Price.6  | MIN MAID O J PLASTIC 96 OZ                     |
+| Price.7  | MM PULP FREE OJ 64 OZ                          |
+| Price.8  | SUNNY DELIGHT FLA CI 64 OZ                     |
+| Price.9  | TREE FRESH O J REG 64 OZ                       |
+| Price.10 | TROP PURE PRM HOMEST 64 OZ                     |
+| Price.l1 | TROP SB HOMESTYLE OJ 64 OZ                     |
+| Sold.4   | Number of units sold for HH ORANGE JUICE 64 OZ |
 
 It is stored in a `data.frame` called `x`. We look at the first few rows of the `data.frame` using the `head` function.
 
 ```{r head_x}
 head(x)
 ```
-
 
 # Standardising
 
@@ -68,8 +70,7 @@ predict_plot(fit, xx)
 
 From the p-values, the important predictors appear to be `Price.4`, `Price.5`, `Price.7` and `Price.11`. The plots of residuals confirm that there are no anomalies in the fit.
 
-We pick one of the important predictors from the last step and include it in a
-new model.
+We pick one of the important predictors from the last step and include it in a new model.
 
 ```{r fit_price_4}
 fit_4 <- lm(Sold.4 ~ Price.4, data=xx)
@@ -116,8 +117,7 @@ Finally we make a partial residual plot for the model from `step`.
 predict_plot(fit_step, partial=TRUE)
 ```
 
-Residual and partial residual plots are also available in the function 
-`termplot` in the `stats` package.
+Residual and partial residual plots are also available in the function `termplot` in the `stats` package.
 
 ```{r termplot}
 library(stats)
@@ -126,5 +126,4 @@ termplot(fit_step, partial.resid = TRUE, ask = FALSE)
 par(mfrow = c(1, 1))
 ```
 
-Note that the partial residuals for `Sold.4` are shown using `predict_plot` 
-whereas `termplot` uses the partial residuals for each predictor on the vertical axis.
+Note that the partial residuals for `Sold.4` are shown using `predict_plot` whereas `termplot` uses the partial residuals for each predictor on the vertical axis.
