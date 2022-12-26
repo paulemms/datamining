@@ -7,7 +7,7 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This is a packaged collection of R functions for data mining originally developed by Thomas Minka for [teaching at CMU](  http://alumni.media.mit.edu/~tpminka/courses/36-350/). 
+This is a packaged collection of R functions for data mining originally developed by Thomas Minka for [teaching at CMU](http://alumni.media.mit.edu/~tpminka/courses/36-350/). 
 
 There are many other packages on CRAN that can replicate this functionality. However, the idea of using visualisation to build regression models is attractive, and the package only depends on base R.
 
