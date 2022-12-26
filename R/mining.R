@@ -79,6 +79,7 @@ banking.fcn <- function(dx,dy,asp) {
 #' @return An aspect ratio, suitable for the \code{asp} parameter to
 #' \code{\link{plot}} or \code{\link{plot.window}}.
 #' @author Tom Minka
+#' @export
 #' @examples
 #'
 #' data(lynx)
@@ -294,6 +295,7 @@ merge.hist <- function(x,b=NULL,n=b,trace=T) {
 #' chosen automatically by \code{\link{hist}}.
 #' @return None.
 #' @author Tom Minka
+#' @export
 #' @examples
 #'
 #' x <- c(rnorm(100,-2,0.5), rnorm(100,2,0.5))
@@ -370,7 +372,7 @@ squash <- function(x,n=1000) {
 #'   \code{\link{plot.segments.ts}},
 #'   \code{\link{break.kmeans}}
 #' @export
-plot.breaks <- function(b) {
+plot_breaks <- function(b) {
   r <- par("usr")[3:4]
   segments(b,rep(r[1],length(b)), b,rep(r[2],length(b)), col="blue", lwd=2)
 }
@@ -391,7 +393,7 @@ plot.breaks <- function(b) {
 #' can be far more illuminating than a plot of the hierarchy as a tree.
 #' @author Tom Minka
 #' @seealso \code{\link{boxplot.hclust}}, \code{\link{ward}},
-#' \code{\link{break.ward}}
+#' \code{\link{break_ward}}
 hist.hclust <- function(hc,x,k=2:5) {
   hb <- break.equal(x,40)
   h <- hist(x,hb,freq=FALSE,col="bisque",main="",xlab="")
@@ -449,7 +451,7 @@ break.quantile <- function(x,n=2,plot=F,pretty=F) {
   if(plot) {
     hb <- break.equal(x,40)
     h <- hist(x,hb,freq=FALSE,col="bisque",main="",xlab="")
-    plot.breaks(b)
+    plot_breaks(b)
   }
   b
 }
@@ -472,7 +474,7 @@ break.kmeans <- function(x,n=2,plot=T) {
   if(plot) {
     hb <- break.equal(x,40)
     h <- hist(x,hb,freq=FALSE,col="bisque",main="",xlab="")
-    plot.breaks(b)
+    plot_breaks(b)
   }
   b
 }
@@ -582,7 +584,7 @@ sum.of.squares <- function(x,q) {
 #'   \code{\link{plot.hclust.trace}},
 #'   \code{\link{hist.hclust}},
 #'   \code{\link{boxplot.hclust}},
-#'   \code{\link{break.ward}},
+#'   \code{\link{break_ward}},
 #'   \code{\link{break.ts}},
 #'   \code{\link{merge.factor}}
 #' @examples
@@ -692,7 +694,7 @@ ward <- function(x,n=rep(1,length(x)),s=rep(1,length(x)),
 #'   that directly precedes a sudden jump in distance.
 #' @author Tom Minka
 #' @seealso
-#'   \code{\link{ward}}, \code{\link{break.ward}}
+#'   \code{\link{ward}}, \code{\link{break_ward}}
 #' @export
 plot.hclust.trace <- function(h,k=1:10) {
   g <- c(rev(h$height),0)
@@ -714,30 +716,31 @@ plot.hclust.trace <- function(h,k=1:10) {
 #' routine (\code{\link{ward}}, \code{\link{hclust}}, or \code{\link{kmeans}}),
 #' convert the output to a break vector, and make plots.
 #'
-#' @aliases break.ward break.kmeans break.hclust
+#' @aliases break_ward break.kmeans break.hclust
 #' @param x a numerical vector
 #' @param n the desired number of bins
 #' @param method argument given to \code{\link{hclust}}
 #' @param plot If TRUE, a histogram with break lines is plotted
-#' (\code{\link{hist.hclust}} or \code{\link{plot.breaks}}). For
-#' \code{break.ward} and \code{break.hclust}, also shows a merging trace
+#' (\code{\link{hist.hclust}} or \code{\link{plot_breaks}}). For
+#' \code{break_ward} and \code{break.hclust}, also shows a merging trace
 #' (\code{\link{plot.hclust.trace}}).
 #' @return A break vector, suitable for use in \code{\link{cut}} or
 #' \code{\link{hist}}.
 #' @author Tom Minka
+#' @export
 #' @examples
 #'
 #' x <- c(rnorm(700,-2,1.5),rnorm(300,3,0.5))
-#' break.ward(x,2)
+#' break_ward(x,2)
 #' break.hclust(x,2,method="complete")
 #' break.kmeans(x,2)
 #'
 #' x <- c(rnorm(700,-2,0.5),rnorm(1000,2.5,1.5),rnorm(500,7,0.1))
-#' break.ward(x,3)
+#' break_ward(x,3)
 #' break.hclust(x,3,method="complete")
 #' break.kmeans(x,3)
 #'
-break.ward <- function(x,n=2,plot=T) {
+break_ward <- function(x,n=2,plot=T) {
   h <- ward(x)
   q <- cutree(h,n)
   ss <- sum(tapply(x,q,scatter))

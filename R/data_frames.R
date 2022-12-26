@@ -31,8 +31,7 @@ formula_with_data <- function(fmla, data) {
 #' @examples
 #' data(mtcars)
 #' sort.data.frame(mtcars, "mpg")
-#' sort(mtcars, f = "mpg") # using S3 despatch
-#' @exportS3Method
+#' @export
 sort.data.frame <- function(df,f=ncol(df),...) {
   if(length(f) == 1) f <- df[[f]]
   else if(length(f) != nrow(df))

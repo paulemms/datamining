@@ -14,7 +14,7 @@
 #' @author Tom Minka
 #' @seealso
 #'   \code{\link{break.ts}},
-#'   \code{\link{plot.breaks}}
+#'   \code{\link{plot_breaks}}
 #' @export
 plot.segments.ts <- function(x,b,lwd=2,...) {
   plot(x,type="l",xlab="time",ylab="level")
@@ -44,7 +44,7 @@ plot.segments.ts <- function(x,b,lwd=2,...) {
 #' @return A vector of time breaks.  The breaks are also plotted visually via
 #' \code{\link{plot.segments.ts}}.
 #' @author Tom Minka
-#' @seealso \code{\link{plot.segments.ts}}, \code{\link{plot.breaks}}
+#' @seealso \code{\link{plot.segments.ts}}, \code{\link{plot_breaks}}
 #' @examples
 #'
 #' data(LakeHuron)
@@ -62,7 +62,7 @@ plot.segments.ts <- function(x,b,lwd=2,...) {
 #' x <- c(rnorm(100),rnorm(300)*3,rnorm(200)*2)
 #' b <- break.ts(x,3,same=F)
 #' plot(x,type="l")
-#' plot.breaks(b)
+#' plot_breaks(b)
 #'
 #' @export
 break.ts <- function(x,n=2,trace=T,same.var=T,...) {
@@ -102,7 +102,7 @@ break.ts <- function(x,n=2,trace=T,same.var=T,...) {
 #' can be far more illuminating than a plot of the hierarchy as a tree.
 #' @author Tom Minka
 #' @seealso \code{\link{hist.hclust}}, \code{\link{ward}},
-#' \code{\link{break.ward}}
+#' \code{\link{break_ward}}
 boxplot.hclust <- function(hc,x,k=2:5,col="bisque",...) {
   x <- x[hc$order]
   boxplot(x,col=col,...)

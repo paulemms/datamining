@@ -1,2 +1,3 @@
+- turn break.hclust etc into break_hclust and make sure exported ow treated as S3 method
 - cannot install or check package yet
 - merge.table broken

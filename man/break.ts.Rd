@@ -45,11 +45,11 @@ break.ts(treering[1:100],7,same=T)
 x <- c(rnorm(100),rnorm(300)*3,rnorm(200)*2)
 b <- break.ts(x,3,same=F)
 plot(x,type="l")
-plot.breaks(b)
+plot_breaks(b)
 
 }
 \seealso{
-\code{\link{plot.segments.ts}}, \code{\link{plot.breaks}}
+\code{\link{plot.segments.ts}}, \code{\link{plot_breaks}}
 }
 \author{
 Tom Minka
