@@ -88,6 +88,8 @@ OrRd.colors <- function(n) {
   else if(n == 2) c("#fdbb84","#e34a33")
   else stop("can't make that many levels")
 }
+
+#' @export
 YlGnBu.colors <- function(n) {
   if(n == 8) c("#ffffd9","#edf8b0","#c7e9b4","#7fcdbb","#41b6c3","#1d91c0","#225ea8","#0c2c83")
   else if(n == 7) c("#ffffcc","#c7e9b4","#7fcdbb","#41b6c3","#1d91c0","#386cb0","#0c2c83")

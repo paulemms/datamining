@@ -1,5 +1,5 @@
-utils::data(state, envir = environment())
-States <- data.frame(state.x77)
+#utils::data(state, envir = environment()) # stops install with hard-coded path
+States <- data.frame(datasets::state.x77)
 names(States)[5] <- "Homocide"
 States$Density <- States$Population/States$Area
 States$Population <- States$Area <- NULL

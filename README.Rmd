@@ -11,12 +11,19 @@ This is a packaged collection of R functions for data mining originally develope
 
 There are many other packages on CRAN that can replicate this functionality. However, the idea of using visualisation to build regression models is attractive, and the package only depends on base R.
 
-## Examples
+## Installation
 
-You can load the package in RStudio using the `devtools` package:
+You can install the package in RStudio using the `devtools` package:
 
-```{r load, warning=FALSE, message=FALSE}
-devtools::load_all(".")
+```{r load, warning=FALSE, message=FALSE, eval=FALSE}
+if (!require(devtools)) install.packages("devtools")
+devtools::install_github("paulemms/datamining")
+```
+
+## Usage
+```{r, message=FALSE, warning=FALSE, echo=TRUE}
+library(datamining)
+packageVersion("datamining")
 ```
 
 The package contains a number of example data sets. The data below is 

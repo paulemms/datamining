@@ -9,13 +9,23 @@ There are many other packages on CRAN that can replicate this
 functionality. However, the idea of using visualisation to build
 regression models is attractive, and the package only depends on base R.
 
-## Examples
+## Installation
 
-You can load the package in RStudio using the `devtools` package:
+You can install the package in RStudio using the `devtools` package:
 
 ``` r
-devtools::load_all(".")
+if (!require(devtools)) install.packages("devtools")
+devtools::install_github("paulemms/datamining")
 ```
+
+## Usage
+
+``` r
+library(datamining)
+packageVersion("datamining")
+```
+
+    ## [1] '1.0.0'
 
 The package contains a number of example data sets. The data below is a
 modified version of the `Boston` data set in the `MASS` package.
