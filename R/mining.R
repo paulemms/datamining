@@ -219,22 +219,23 @@ bhist.stats <- function(x,b) {
 #' interesting number of bins is one that directly precedes a sudden jump in
 #' the chi-square distance.
 #' @author Tom Minka
+#' @export
 #' @examples
 #'
 #' x <- c(rnorm(100,-2,0.5),rnorm(100,2,0.5))
 #' b <- seq(-4,4,by=0.25)
-#' merge.hist(x,b,10)
+#' merge_hist(x,b,10)
 #' # according to the merging trace, n=5 and n=11 are most interesting.
 #'
 #' x <- runif(1000)
 #' b <- seq(0,1,by=0.05)
-#' merge.hist(x,b,10)
+#' merge_hist(x,b,10)
 #' # according to the merging trace, n=6 and n=9 are most interesting.
 #' # because the data is uniform, there should only be one bin,
 #' # but chance deviations in density prevent this.
-#' # a multiple comparisons correction in merge.hist may fix this.
+#' # a multiple comparisons correction in merge_hist may fix this.
 #'
-merge.hist <- function(x,b=NULL,n=b,trace=T) {
+merge_hist <- function(x,b=NULL,n=b,trace=T) {
   ss <- c()
   bn <- NULL
   repeat {
@@ -370,7 +371,7 @@ squash <- function(x,n=1000) {
 #' @seealso
 #'   \code{\link{plot.hclust.breaks}},
 #'   \code{\link{plot.segments.ts}},
-#'   \code{\link{break.kmeans}}
+#'   \code{\link{break_kmeans}}
 #' @export
 plot_breaks <- function(b) {
   r <- par("usr")[3:4]
@@ -392,6 +393,7 @@ plot_breaks <- function(b) {
 #' By reading top to bottom, you can see how each cluster is subdivided. This
 #' can be far more illuminating than a plot of the hierarchy as a tree.
 #' @author Tom Minka
+#' @exportS3Method
 #' @seealso \code{\link{boxplot.hclust}}, \code{\link{ward}},
 #' \code{\link{break_ward}}
 hist.hclust <- function(hc,x,k=2:5) {
@@ -465,7 +467,8 @@ break.centers <- function(x,m) {
   c(r[1]-eps,b,r[2])
 }
 
-break.kmeans <- function(x,n=2,plot=T) {
+#' @export
+break_kmeans <- function(x,n=2,plot=T) {
   km <- kmeans(x,n)
   m <- as.numeric(km$centers)
   ss <- sum(km$withinss)
@@ -581,26 +584,26 @@ sum.of.squares <- function(x,q) {
 #'   from \code{sortx=T} and \code{same.var=F} may occasionally be suboptimal.
 #' @seealso
 #'   \code{\link{hclust}},
-#'   \code{\link{plot.hclust.trace}},
+#'   \code{\link{plot_hclust_trace}},
 #'   \code{\link{hist.hclust}},
 #'   \code{\link{boxplot.hclust}},
 #'   \code{\link{break_ward}},
 #'   \code{\link{break.ts}},
-#'   \code{\link{merge.factor}}
+#'   \code{\link{merge_factor}}
 #' @examples
 #' x <- c(rnorm(700,-2,1.5),rnorm(300,3,0.5))
 #' hc <- ward(x)
 #' opar <- par(mfrow=c(2,1))
 #' # use dev.new() in RStudio
-#' plot.hclust.trace(hc)
-#' hist.hclust(hc,x)
+#' plot_hclust_trace(hc)
+#' hist(hc,x)
 #' par(opar)
 #'
 #' x <- c(rnorm(700,-2,0.5),rnorm(1000,2.5,1.5),rnorm(500,7,0.1))
 #' hc <- ward(x)
 #' opar <- par(mfrow=c(2,1))
-#' plot.hclust.trace(hc)
-#' hist.hclust(hc,x)
+#' plot_hclust_trace(hc)
+#' hist(hc,x)
 #' par(opar)
 #'
 #' data(OrchardSprays)
@@ -615,7 +618,7 @@ sum.of.squares <- function(x,q) {
 #' #m <- tapply(x,f,mean)
 #' #s <- tapply(x,f,var)*n
 #' #hc <- ward(m,n,s)
-#' boxplot.hclust(hc,split(x,f))
+#' boxplot(hc,split(x,f))
 #' @export
 ward <- function(x,n=rep(1,length(x)),s=rep(1,length(x)),
                  sortx=TRUE,same.var=T) {
@@ -696,7 +699,7 @@ ward <- function(x,n=rep(1,length(x)),s=rep(1,length(x)),
 #' @seealso
 #'   \code{\link{ward}}, \code{\link{break_ward}}
 #' @export
-plot.hclust.trace <- function(h,k=1:10) {
+plot_hclust_trace <- function(h,k=1:10) {
   g <- c(rev(h$height),0)
   k <- k[k < length(g)]
   #g <- sqrt(g)
@@ -716,14 +719,14 @@ plot.hclust.trace <- function(h,k=1:10) {
 #' routine (\code{\link{ward}}, \code{\link{hclust}}, or \code{\link{kmeans}}),
 #' convert the output to a break vector, and make plots.
 #'
-#' @aliases break_ward break.kmeans break.hclust
+#' @aliases break_ward break_kmeans break_hclust
 #' @param x a numerical vector
 #' @param n the desired number of bins
 #' @param method argument given to \code{\link{hclust}}
 #' @param plot If TRUE, a histogram with break lines is plotted
 #' (\code{\link{hist.hclust}} or \code{\link{plot_breaks}}). For
-#' \code{break_ward} and \code{break.hclust}, also shows a merging trace
-#' (\code{\link{plot.hclust.trace}}).
+#' \code{break_ward} and \code{break_hclust}, also shows a merging trace
+#' (\code{\link{plot_hclust_trace}}).
 #' @return A break vector, suitable for use in \code{\link{cut}} or
 #' \code{\link{hist}}.
 #' @author Tom Minka
@@ -732,13 +735,13 @@ plot.hclust.trace <- function(h,k=1:10) {
 #'
 #' x <- c(rnorm(700,-2,1.5),rnorm(300,3,0.5))
 #' break_ward(x,2)
-#' break.hclust(x,2,method="complete")
-#' break.kmeans(x,2)
+#' break_hclust(x,2,method="complete")
+#' break_kmeans(x,2)
 #'
 #' x <- c(rnorm(700,-2,0.5),rnorm(1000,2.5,1.5),rnorm(500,7,0.1))
 #' break_ward(x,3)
-#' break.hclust(x,3,method="complete")
-#' break.kmeans(x,3)
+#' break_hclust(x,3,method="complete")
+#' break_kmeans(x,3)
 #'
 break_ward <- function(x,n=2,plot=T) {
   h <- ward(x)
@@ -749,9 +752,9 @@ break_ward <- function(x,n=2,plot=T) {
 
   if(plot) {
     split.screen(c(2,1))
-    plot.hclust.trace(h)
+    plot_hclust_trace(h)
     screen(2)
-    hist.hclust(h,x,k=2:n)
+    hist(h,x,k=2:n)
     close.screen(all=TRUE)
   }
   b
@@ -760,7 +763,8 @@ break_ward <- function(x,n=2,plot=T) {
 # "ward" is best
 # "ave","centroid" are good
 # "single", "complete","median","mcq" are bad
-break.hclust <- function(x,n=2,method="ward",plot=T) {
+#' @export
+break_hclust <- function(x,n=2,method="ward",plot=T) {
   h <- hclust(dist(x)^2,method)
   q <- cutree(h,n)
   ss <- sum(tapply(x,q,scatter))
@@ -769,9 +773,9 @@ break.hclust <- function(x,n=2,method="ward",plot=T) {
 
   if(plot) {
     split.screen(c(2,1))
-    plot.hclust.trace(h)
+    plot_hclust_trace(h)
     screen(2)
-    hist.hclust(h,x,k=2:n)
+    hist(h,x,k=2:n)
     close.screen(all=TRUE)
   }
   b

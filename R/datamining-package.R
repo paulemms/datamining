@@ -22,7 +22,7 @@
 #' hist(StatesT)
 #' w <- pca(StatesT, 2)
 #' text_plot(project(StatesT, w), asp=1, cex=.6)
-#' plot.axes(w)
+#' plot_axes(w)
 #'
 NULL
 

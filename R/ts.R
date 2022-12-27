@@ -39,7 +39,7 @@ plot.segments.ts <- function(x,b,lwd=2,...) {
 #' @param x a numerical vector or \code{ts} object
 #' @param n the desired number of segments
 #' @param trace If TRUE, shows a merging trace via
-#' \code{\link{plot.hclust.trace}}
+#' \code{\link{plot_hclust_trace}}
 #' @param same.var argument passed to \code{\link{ward}}
 #' @return A vector of time breaks.  The breaks are also plotted visually via
 #' \code{\link{plot.segments.ts}}.
@@ -76,7 +76,7 @@ break.ts <- function(x,n=2,trace=T,same.var=T,...) {
   if(length(h$height) < 2) trace <- F
   if(trace) {
     split.screen(c(2,1))
-    plot.hclust.trace(h)
+    plot_hclust_trace(h)
     screen(2)
   }
   plot.segments.ts(x,b,...)
@@ -101,6 +101,7 @@ break.ts <- function(x,n=2,trace=T,same.var=T,...) {
 #' By reading top to bottom, you can see how each cluster is subdivided. This
 #' can be far more illuminating than a plot of the hierarchy as a tree.
 #' @author Tom Minka
+#' @exportS3Method
 #' @seealso \code{\link{hist.hclust}}, \code{\link{ward}},
 #' \code{\link{break_ward}}
 boxplot.hclust <- function(hc,x,k=2:5,col="bisque",...) {
@@ -134,28 +135,29 @@ boxplot.hclust <- function(hc,x,k=2:5,col="bisque",...) {
 #' @param n the desired number of factor levels
 #' @param same.var argument passed to \code{\link{ward}}
 #' @param trace If TRUE, a merging trace is plotted
-#' (\code{\link{plot.hclust.trace}})
+#' (\code{\link{plot_hclust_trace}})
 #' @param xlab,ylab axis labels.  If NA, taken from f and x arguments.
 #' @return A new factor, same length as \code{f}, but with \code{n} levels.
 #' @author Tom Minka
+#' @export
 #' @examples
 #'
 #' n <- 20
 #' x <- c(rnorm(n)+1, rnorm(n)+2, rnorm(n)*4+2)
 #' f <- gl(3,n)
 #' levels(f) <- c("a","b","c")
-#' merge.factor(f,x,2,same.var=T)
-#' merge.factor(f,x,2,same.var=F)
+#' merge_factor(f,x,2,same.var=T)
+#' merge_factor(f,x,2,same.var=F)
 #'
 #' # an ordered factor
 #' data(va.deaths)
-#' merge.factor(va.deaths$Age,va.deaths$Rate,2)
+#' merge_factor(va.deaths$Age,va.deaths$Rate,2)
 #'
-merge.factor <- function(f,x,n,same.var=T,trace=T,xlab=NA,ylab=NA) {
+merge_factor <- function(f,x,n,same.var=T,trace=T,xlab=NA,ylab=NA) {
   if(is.na(xlab)) xlab <- deparse(substitute(f))
   if(is.na(ylab)) ylab <- deparse(substitute(x))
   ord <- is.ordered(f)
-  if(!ord) f <- sort.levels(f,x,fun=mean)
+  if(!ord) f <- sort_levels(f,x,fun=mean)
   # drop unused categories
   f <- factor(f)
   h <- ward(split(x,f),sortx=!ord,same.var=same.var)
@@ -175,10 +177,10 @@ merge.factor <- function(f,x,n,same.var=T,trace=T,xlab=NA,ylab=NA) {
   if(trace) {
     split.screen(c(2,1))
     on.exit(close.screen(all=TRUE))
-    plot.hclust.trace(h)
+    plot_hclust_trace(h)
     screen(2)
   }
-  boxplot.hclust(h,split(x,of),xlab=xlab,ylab=ylab)
+  boxplot(h,split(x,of),xlab=xlab,ylab=ylab)
   f
 }
 

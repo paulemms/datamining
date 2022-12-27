@@ -35,7 +35,7 @@ data(Housing)
 w <- pca(HousingT, k=2)
 dev.new()
 plot(project(HousingT, w), asp=1)
-plot.axes(w)
+plot_axes(w)
 }
 \seealso{
 \code{\link{project}}, \code{\link{projection}},

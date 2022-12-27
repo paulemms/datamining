@@ -4,16 +4,16 @@
 \alias{sort.data.frame}
 \title{Sort rows of a data frame}
 \usage{
-\method{sort}{data.frame}(df, f = ncol(df), ...)
+\method{sort}{data.frame}(x, decreasing = FALSE, f = ncol(x), ...)
 }
 \arguments{
-\item{df}{a data frame}
+\item{x}{a data frame}
 
-\item{f}{the name or number of a column of \code{df}, or a numeric vector
-to play the role of a column of \code{df}. Default: Last column.}
+\item{f}{the name or number of a column of \code{x}, or a numeric vector
+to play the role of a column of \code{x}. Default: Last column.}
 }
 \value{
-A reordered version of \code{df} where the values in column \code{f} are in
+A reordered version of \code{x} where the values in column \code{f} are in
   ascending order.
 }
 \description{
@@ -21,7 +21,7 @@ Re-orders data frame rows so that a column is sorted.
 }
 \examples{
 data(mtcars)
-sort.data.frame(mtcars, "mpg")
+sort(mtcars, f = "mpg")
 }
 \seealso{
 \code{\link{sort_cells}}

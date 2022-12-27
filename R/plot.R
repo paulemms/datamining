@@ -117,6 +117,7 @@ apply_order <- function(x, ord) {
 #' @param col a vector of colors to use for representing values.
 #' @param ... extra arguments to \code{\link{image.default}}.
 #' @author Tom Minka
+#' @export
 #' @seealso \code{\link{YR.colors}}
 #' @references M. C. Minnotte and R. W. West. "The Data Image: A Tool For
 #' Exploring High Dimensional Data Sets." Proceedings of the ASA Section on
@@ -1465,7 +1466,7 @@ predict_plot.data.frame <- function(x,layout=NULL,partial=NULL,condensed=T,
       if(is.null(x[[resp]])) stop(paste("partial of",i,"not found"))
     }
     if(is.factor(x[[i]]) && !is.ordered(x[[i]])) {
-      x[[i]] <- sort.levels(x[[i]],as.numeric(x[[resp]]))
+      x[[i]] <- sort_levels(x[[i]],as.numeric(x[[resp]]))
     }
     # plot points
     if(is.null(given)) {

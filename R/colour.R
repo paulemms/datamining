@@ -101,6 +101,7 @@ YlGnBu.colors <- function(n) {
   else stop("can't make that many levels")
 }
 # diverging
+#' @export
 BrBg.colors <- function(n) {
   if(n == 7) c("#8c510a","#d8b365","#f6e8c3","#f5f5f5","#c7eae5","#5ab4ac","#01665e")
   else if(n == 6) c("#8c510a","#d8b365","#f6e8c3","#c7eae5","#5ab4ac","#01665e")
@@ -110,6 +111,7 @@ BrBg.colors <- function(n) {
   else if(n == 2) c("#d8b365","#5ab4ac")
   else stop("can't make that many levels")
 }
+#' @export
 RYB.colors <- function(n) {
   if(n == 7) c("#d73d29","#fc8d59","#fee090","#ffffbf","#e0f3f8","#91bfdb","#4575b4")
   else if(n == 6) c("#d73d29","#fc8d59","#fee090","#e0f3f8","#91bfdb","#4575b4")
@@ -121,6 +123,7 @@ RYB.colors <- function(n) {
 }
 
 # sequential WYRK
+#' @export
 YR.colors <- function(k,lt=0.97,dk=0.03) {
   r <- c(lt, rep(lt,k),
          rep(lt,k),
@@ -136,6 +139,7 @@ YR.colors <- function(k,lt=0.97,dk=0.03) {
 }
 
 # diverging
+#' @export
 diverging.colors <- function(n,hmax=0,hmin=(0.5+hmax)%%1,v=1) {
   if(n %% 2 == 1) {
     # odd case
@@ -151,7 +155,11 @@ diverging.colors <- function(n,hmax=0,hmin=(0.5+hmax)%%1,v=1) {
       hsv(h = hmax, s = rev(x), v))
   }
 }
+
+#' @export
 RC.colors <- diverging.colors
+
+#' @export
 GM.colors <- function(n) diverging.colors(n,2/6)
 
 # returns a new vector of darker colors
@@ -194,6 +202,7 @@ darker <- function(col,scale=0.8) {
 #' (using \code{\link{mtext}}).  If \code{breaks} is given, the boundary
 #' between segments is also labeled with a number.
 #' @author Tom Minka
+#' @export
 #' @seealso \code{\link{color.plot}}
 #' @examples
 #'
@@ -1021,7 +1030,7 @@ color.plot.knn <- function(object,x,pclass=NULL,fill=F,res=50,
   if(fill) {
     if(prob.plot) {
       filled.contour(x1,x2,z,
-                     plot.axes={
+                     plot_axes={
                        title(main=main,xlab=pred[1],ylab=pred[2]);axis(1);axis(2);
                        if(!add) color.plot.data.frame(x,col=1,add=T,...)
                      },...)

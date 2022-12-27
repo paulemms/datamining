@@ -248,10 +248,10 @@ not <- function(x,i) {
 #' @author Tom Minka
 #' @examples
 #' data(OrchardSprays)
-#' sort.levels(OrchardSprays$treatment, OrchardSprays$decrease)
-#' sort.levels(OrchardSprays$treatment, OrchardSprays$decrease, fun=mean)
+#' sort_levels(OrchardSprays$treatment, OrchardSprays$decrease)
+#' sort_levels(OrchardSprays$treatment, OrchardSprays$decrease, fun=mean)
 #' @export
-sort.levels <- function(f,x,fun=median) {
+sort_levels <- function(f,x,fun=median) {
   if(length(x) == length(f)) x <- tapply(x,f,fun)
   if(length(x) != length(levels(f))) stop("wrong number of values to sort by")
   factor(f,levels=levels(f)[order(x)])
@@ -334,17 +334,20 @@ rsplit <- function(x,p) {
   split(x,sample(i))
 }
 
+#' @export
 is.dimOrdered <- function(d) {
   # dimensions are ordered by default
   a <- attr(d,"ordered")
   is.null(a) || a
 }
+#' @export
 dimOrdered <- function(x) {
   dn = dimnames(x)
   # never return NULL
   if(is.null(dn)) dn = dim(x)
   sapply(dn,is.dimOrdered)
 }
+#' @export
 "dimOrdered<-" <- function(x,value) {
   d = 1:length(dim(x))
   if(length(value) == 1) value = rep(value,length(d))

@@ -15,7 +15,7 @@
 #'   Other variables are left unchanged.
 #' @author Tom Minka
 #' @seealso
-#'   \code{\link{pca}}, \code{\link{projection}}, \code{\link{plot.axes}}
+#'   \code{\link{pca}}, \code{\link{projection}}, \code{\link{plot_axes}}
 #' @examples
 #' data(iris)
 #' w = projection(iris, k=2)
@@ -24,7 +24,7 @@
 #' x = project(iris, w)
 #' # in RStudio use dev.new()
 #' color.plot(x)
-#' plot.axes(w)
+#' plot_axes(w)
 #' @export
 project <- function(x,w) {
   pred <- rownames(w)
@@ -82,7 +82,7 @@ standardize.projection <- function(w) {
 #' w <- pca(HousingT, k=2)
 #' dev.new()
 #' plot(project(HousingT, w), asp=1)
-#' plot.axes(w)
+#' plot_axes(w)
 #' @export
 pca <- function(x,k=1,...) {
   x <- as.data.frame(x)
@@ -564,7 +564,7 @@ color.plot.project.glm <- function(fit,data,type="mv",col=3,coef=F,lwd=2,...) {
 #' @seealso
 #'   \code{\link{project}}, \code{\link{pca}}, \code{\link{projection}}
 #' @export
-plot.axes <- function(w,col=2,origin=NULL,keep=NULL,top=NULL,
+plot_axes <- function(w,col=2,origin=NULL,keep=NULL,top=NULL,
                       cex=par("cex"),labels,...) {
   # labels is to prevent it going to text()
   if(is.null(keep)) keep <- 0.2
@@ -798,7 +798,7 @@ separate.level <- function(x,lev,type="mv",layout,keep=NULL,identify.flag=F,axes
     w <- projection(x,k=2,type=type)
     px <- project(x,w)
     color.plot(px,axes=axes,...)
-    plot.axes(w,origin=F,keep=keep,col=3)
+    plot_axes(w,origin=F,keep=keep,col=3)
     if(identify.flag) {
       h <- identify(px,plot=F)
       if(length(h) > 0) text(px[h,1],px[h,2],rownames(px)[h],cex=0.9)
@@ -821,7 +821,7 @@ separate.pairwise <- function(x,level,type="mv",layout,identify.flag=F,axes=F,..
     w <- projection(xk,k=2,type=type)
     px <- project(xk,w)
     color.plot(px,axes=axes,...)
-    plot.axes(w,origin=F,col=3)
+    plot_axes(w,origin=F,col=3)
     if(identify.flag) {
       h <- identify(px,plot=F)
       if(length(h) > 0) text(px[h,1],px[h,2],rownames(px)[h],cex=0.9)
@@ -951,7 +951,7 @@ top.features <- function(x,r,m=4,layout,type="mv",...) {
       xw <- project(xw,w)
     }
     color.plot(xw,...)
-    if(k > 2) plot.axes(w)
+    if(k > 2) plot_axes(w)
   }
 }
 
@@ -988,7 +988,7 @@ separate <- function(x,i,label=NULL,axes=F,...) {
   mar = par("mar")
   on.exit(par(mar=mar))
   color.plot(project(sx,w),f,axes=axes,...)
-  plot.axes(w,col=3,origin=F,...)
+  plot_axes(w,col=3,origin=F,...)
   # clean up after creating sx
   rm(sx)
   gc()

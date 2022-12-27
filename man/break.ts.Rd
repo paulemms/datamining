@@ -12,7 +12,7 @@ break.ts(x, n = 2, trace = T, same.var = T, ...)
 \item{n}{the desired number of segments}
 
 \item{trace}{If TRUE, shows a merging trace via
-\code{\link{plot.hclust.trace}}}
+\code{\link{plot_hclust_trace}}}
 
 \item{same.var}{argument passed to \code{\link{ward}}}
 }

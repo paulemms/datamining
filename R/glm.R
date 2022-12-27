@@ -1027,6 +1027,7 @@ as.matrix.rtable <- function(rt,...) {
   } else x
 }
 
+#' @export
 row.probs <- function(x,smooth=0.5,se=F) {
   # converts ctable to rtable
   x = x + smooth
@@ -1040,6 +1041,8 @@ row.probs <- function(x,smooth=0.5,se=F) {
     list(p=p,se=p.se)
   } else p
 }
+
+#' @export
 log.counts <- function(x,smooth=0.5,se=F) {
   x = x+smooth
   r = as.rtable(log(x),"log(count)")
@@ -1049,6 +1052,8 @@ log.counts <- function(x,smooth=0.5,se=F) {
     list(r=r,se=se)
   } else r
 }
+
+#' @export
 logit.rtable = function(x,smooth=0.5,se=F) {
   resp = response.var(x)
   pred = predictor.vars(x)
@@ -1064,6 +1069,8 @@ logit.rtable = function(x,smooth=0.5,se=F) {
     list(r=r,se=se)
   } else r
 }
+
+#' @export
 pclass.rtable = function(x,pclass=2,smooth=0.5,se=F) {
   resp = response.var(x)
   pred = predictor.vars(x)
@@ -1174,6 +1181,7 @@ rtable <- function(object, ...) UseMethod("rtable")
 #' @param xscale describes how the columns should be placed.
 #' @param ... additional arguments to \code{\link{labeled.curves}}.
 #' @author Tom Minka
+#' @export
 #' @seealso \code{\link{dotchart}}, \code{\link{mosaicplot}}
 #' @examples
 #'
@@ -1496,6 +1504,7 @@ labeled_curves <- function(x,y,se=NULL,labels,xtick=names(x),
   }
 }
 
+#' @export
 my.legend <- function(pos=c(1,1),...) {
   if(length(pos) == 1) pos = c(pos,pos)
   xlim = par("usr")[1:2]
@@ -1505,6 +1514,7 @@ my.legend <- function(pos=c(1,1),...) {
   legend(x,y,...,xjust=pos[1],yjust=pos[2])
 }
 
+#' @export
 title.las <- function(xlab=NULL,ylab=NULL,las=par("las"),...) {
   if(las == 0) {
     title(xlab=xlab,ylab=ylab,...)
@@ -1520,6 +1530,7 @@ title.las <- function(xlab=NULL,ylab=NULL,las=par("las"),...) {
   }
 }
 
+#' @export
 errorbars <- function(x,se,las=1,color.palette=1,margin=1/3,...) {
   # a dotplot with error bars.
   # if x has more than one column, multiple charts will be drawn,

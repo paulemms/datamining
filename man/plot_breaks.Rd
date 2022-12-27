@@ -19,7 +19,7 @@ Draws lines to indicate break locations.
 \seealso{
 \code{\link{plot.hclust.breaks}},
   \code{\link{plot.segments.ts}},
-  \code{\link{break.kmeans}}
+  \code{\link{break_kmeans}}
 }
 \author{
 Tom Minka

@@ -31,10 +31,10 @@ w = projection(iris, k=2)
 x = project(iris, w)
 # in RStudio use dev.new()
 color.plot(x)
-plot.axes(w)
+plot_axes(w)
 }
 \seealso{
-\code{\link{pca}}, \code{\link{projection}}, \code{\link{plot.axes}}
+\code{\link{pca}}, \code{\link{projection}}, \code{\link{plot_axes}}
 }
 \author{
 Tom Minka

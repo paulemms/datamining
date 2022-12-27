@@ -2,6 +2,3 @@
 .Rhistory
 .RData
 .Ruserdata
-man/*
-Rplots*.pdf
-inst/original_src

@@ -378,7 +378,7 @@ project.slices <- function(x,y=NULL,nlevels=4,aligned=T,type="mv",...) {
       color.plot(px.lev,zlab=main,xlim=xlim,ylim=ylim,...)
       #color.plot(px,y.lev,...)
     }
-    plot.axes(w,...)
+    plot_axes(w,...)
   }
 }
 

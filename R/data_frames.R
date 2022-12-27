@@ -19,24 +19,24 @@ formula_with_data <- function(fmla, data) {
 #' Sort rows of a data frame
 #'
 #' Re-orders data frame rows so that a column is sorted.
-#' @param df a data frame
-#' @param f the name or number of a column of \code{df}, or a numeric vector
-#'     to play the role of a column of \code{df}. Default: Last column.
+#' @param x a data frame
+#' @param f the name or number of a column of \code{x}, or a numeric vector
+#'     to play the role of a column of \code{x}. Default: Last column.
 #' @return
-#'   A reordered version of \code{df} where the values in column \code{f} are in
+#'   A reordered version of \code{x} where the values in column \code{f} are in
 #'   ascending order.
 #' @author Tom Minka
 #' @seealso
 #'   \code{\link{sort_cells}}
 #' @examples
 #' data(mtcars)
-#' sort.data.frame(mtcars, "mpg")
-#' @export
-sort.data.frame <- function(df,f=ncol(df),...) {
-  if(length(f) == 1) f <- df[[f]]
-  else if(length(f) != nrow(df))
+#' sort(mtcars, f = "mpg")
+#' @exportS3Method
+sort.data.frame <- function(x, decreasing=FALSE, f=ncol(x), ...) {
+  if(length(f) == 1) f <- x[[f]]
+  else if(length(f) != nrow(x))
     stop("length of sort vector doesn't match nrows")
-  df[order(f,...),,drop=F]
+  x[order(f, decreasing = decreasing, ...),,drop=F]
 }
 
 
@@ -770,7 +770,7 @@ my.filled.contour <-
             levels = pretty(zlim, nlevels), nlevels = 20,
             color.palette = cm.colors,
             col = color.palette(length(levels) - 1),
-            plot.title, plot.axes, key.title, key.axes, key=T,
+            plot.title, plot_axes, key.title, key.axes, key=T,
             asp = NA, xaxs="i", yaxs="i", las = 1, axes = TRUE,
             frame.plot = axes, main="", ...)
   {
@@ -836,11 +836,11 @@ my.filled.contour <-
                             as.double(levels),
                             col = col))
     if (axes) {
-      if (missing(plot.axes)) {
+      if (missing(plot_axes)) {
         # minka: no title here
         axis(1)
         axis(2)
-      } else plot.axes
+      } else plot_axes
       if (missing(plot.title))
         title(main=main,...)
       else
@@ -1008,6 +1008,7 @@ indep.fit <- function(x) {
 #' value describes the ratio of the actual count in the cell versus the
 #' expected count under independence.
 #' @author Tom Minka
+#' @export
 #' @examples
 #'
 #' data(Titanic)
@@ -1055,7 +1056,7 @@ mine.associations <- function(x,top=10,targets=NULL,z=1) {
       #rownames(res) <- nrow(res):1
     }
   }
-  res <- sort.data.frame(res,1)
+  res <- sort.data.frame(res, f = 1)
   if(nrow(res) > top) res <- res[nrow(res)+1-(top:1),]
   rownames(res) <- nrow(res):1
   res
