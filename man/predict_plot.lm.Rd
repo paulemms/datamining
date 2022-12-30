@@ -19,8 +19,8 @@
 }
 \value{
 A plot similar to \code{\link{predict_plot}}, but where the vertical
-  axis is residuals.  These plots can be used to judge which predictors
-  should be added to the model.
+axis is residuals.  These plots can be used to judge which predictors
+should be added to the model.
 }
 \description{
 Makes a matrix of pairwise scatterplots with lowess-type trend lines.

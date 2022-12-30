@@ -17,7 +17,7 @@ Sort the cells of an array
 }
 \details{
 Converts \code{x} to a data frame and calls
-  \code{\link{sort.data.frame}}.
+\code{\link{sort.data.frame}}.
 }
 \examples{
 data(Titanic)
@@ -26,7 +26,7 @@ data(HairEyeColor)
 sort_cells(HairEyeColor)
 }
 \seealso{
-\code{\link{sort.data.frame}}
+\code{\link[=sort.data.frame]{sort.data.frame()}}
 }
 \author{
 Tom Minka

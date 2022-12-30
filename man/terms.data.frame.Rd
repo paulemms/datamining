@@ -2,7 +2,8 @@
 % Please edit documentation in R/data_frames.R
 \name{terms.data.frame}
 \alias{terms.data.frame}
-\title{# does NOT throw an error if no terms
+\title{does NOT throw an error if no terms
+
 #' @export
 terms <- function(...) UseMethod("terms")}
 \usage{

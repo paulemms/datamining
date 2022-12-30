@@ -29,10 +29,10 @@ limits chosen to make all labels visible.
 }
 \details{
 The main job of \code{\link{text.plot}} is finding the right plot
-  limits so that all labels are visible.  It does this by computing the
-  bounding box of each label (taking into account text rotation and
-                              justification) and solving a system of inequalities which ensure that
-  each label fits entirely into the plot window.
+limits so that all labels are visible.  It does this by computing the
+bounding box of each label (taking into account text rotation and
+justification) and solving a system of inequalities which ensure that
+each label fits entirely into the plot window.
 }
 \examples{
 data(state)

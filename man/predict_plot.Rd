@@ -57,7 +57,7 @@ ratio is chosen automatically based on the trend line and
 }
 \value{
 If the predictor is numeric, makes a scatterplot with loess line on top.
-  If the predictor is a factor, makes a \code{\link{linechart}}.
+If the predictor is a factor, makes a \code{\link{linechart}}.
 }
 \description{
 Makes a matrix of pairwise scatterplots with lowess-type trend lines.

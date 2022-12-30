@@ -8,9 +8,9 @@ U.S. state population 1790-1990
 }
 \details{
 \code{state.pop} is a matrix containing the population of
-  each U.S. state, including the District of Columbia,
-  from 1790 to 1990 in ten-year increments.
-  The rows are the years "1790" to "1990" and the columns are state names.
+each U.S. state, including the District of Columbia,
+from 1790 to 1990 in ten-year increments.
+The rows are the years "1790" to "1990" and the columns are state names.
 }
 \examples{
   dotchart(sort(log(state.pop["1990",])))
@@ -21,8 +21,8 @@ U.S. state population 1790-1990
 }
 \references{
 The data was obtained from
-  \url{http://merrill.olm.net/pdocs/feas/pop/pop1790_1990/pii.txt}
-  and edited into R format.
+\url{http://merrill.olm.net/pdocs/feas/pop/pop1790_1990/pii.txt}
+and edited into R format.
 }
 \seealso{
 \code{\link{state.area}}, \code{\link{state.name}}, \code{\link{state}}

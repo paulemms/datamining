@@ -13,15 +13,15 @@
 }
 \value{
 Plots the time series as a line, then draws a blue horizontal line
-  through each segment, at the mean value of the segment.
+through each segment, at the mean value of the segment.
 }
 \description{
 Shows how the mean level of a time-series varies between
-  segments.
+segments.
 }
 \seealso{
 \code{\link{break.ts}},
-  \code{\link{plot_breaks}}
+\code{\link{plot_breaks}}
 }
 \author{
 Tom Minka

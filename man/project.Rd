@@ -13,15 +13,15 @@ project(x, w)
 }
 \value{
 A data frame where the variables named in the rows of \code{w} are
-  replaced by new variables named in the columns of \code{w}.
-  Other variables are left unchanged.
+replaced by new variables named in the columns of \code{w}.
+Other variables are left unchanged.
 }
 \description{
 Reduces the dimensionality of a data set.
 }
 \details{
 Each column of \code{w} specifies a new variable, which is to be
-  constructed by combining existing variables according to the given weights.
+constructed by combining existing variables according to the given weights.
 }
 \examples{
 data(iris)

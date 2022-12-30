@@ -323,6 +323,7 @@ nearest.points <- function(a,b) {
   list(which=b.which,dist=b.dist)
 }
 
+#' @export
 distances <- function(x,fun) {
   if(missing(fun)) sqrt(sqdist(x))
   else {

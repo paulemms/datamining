@@ -13,7 +13,7 @@ predictor_vars(object)
 vector of predicts
 }
 \description{
-If the object inherits from a `data.frame` then it is assumed the
+If the object inherits from a \code{data.frame} then it is assumed the
 response is in the first column.
 }
 \examples{

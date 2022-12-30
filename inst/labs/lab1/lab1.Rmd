@@ -1,0 +1,101 @@
+---
+title: 'Lab 1:'
+output:
+  html_document:
+    df_print: paged
+---
+
+# Introduction
+
+This lab focuses on text processing in R.
+
+First we load the `datamining` package and the data for the lab.
+
+```{r}
+library(datamining)
+load("lab1_docs.rda")
+```
+
+# Processing a text file
+
+Using the functions described below, read the file `politics3.txt` into R. What is the 57th word
+in the document?
+
+# The full dataset
+
+1 The full dataset is in a table called `doc`, containing 9 posts to `talk.politics.misc` and 9 posts
+to `talk.religion.misc`. The `dim` function will tell you the size of the table:
+
+```{r}
+dim(doc)
+```
+
+A vector `doc.labels` is also defined.
+
+2. According to `doc`, how many times does ‘the’ occur in politics3! Give a command to select
+the answer from doc. (Note that both the rows and columns have names.)
+
+# Document similarity
+3. In preparation for computing distances, remove the words which occur only once, and weight
+the remaining words by inverse document frequency (IDF). These two commands do it:
+```{r eval=FALSE}
+doc = remove.singletons(doc)
+doc = idf.weight(doc)
+```
+`doc` is modified in place.
+4. Compute a distance matrix between all documents, using IDF and without normalizing for
+document length. Save the first five rows in your Word file, for use in the homework. You can
+also write the entire table to a file, via
+```{r eval=FALSE}
+write .array(d,file="d.txt")
+```
+5. Compute a distance matrix where the weighted word counts have been normalized by the doc-
+ument total. Save the first five rows.
+6. Compute a distance matrix where the weighted word counts have been normalized by the doc-
+ument’s Euclidean length. Save the first five rows.
+7. Pick one of the above matrices and make a multidimensional scaling visualization of it. Save the plot.
+
+# Reading a document into R
+
+If the Desktop has a file called “politics3.txt”, you can read it into R via
+```{r}
+txt <- read_doc("politics3.txt")
+```
+
+This makes `txt` into a vector of words. The nth word can obtained by typing `txt[n]`. 
+The function `read.doc` removes the message header, removes all punctuation and capitalization, and converts all numbers to the hash symbol #. Typing `table(txt)` gives the bag of words representation.
+
+Selecting from a table or matrix When a table has two dimensions, like doc does, you select from
+it by giving a row name or number and a column name or number, e.g. `doc[2,4]` or `doc[4,"the"]`. An
+entire row or column can be selected by leaving out the index, e.g. `doc["politics3",]` or `doc[, 4]`.
+
+# Computing distances 
+
+If `x` has your (normalized and weighted) word counts, type
+```{r eval=FALSE}
+d <- distances(x)
+```
+and `d` will become a matrix of distances.
+
+# Normalizing documents 
+
+To divide each document’s count vector by its sum:
+```{r}
+x <- div_by_sum(doc)
+```
+The result is put into `x` so that the original doc can still be used. To instead divide each document's count vector by its Euclidean length:
+```{r}
+x <- div_by_euc_length(doc)
+```
+
+# Multidimensional scaling
+If $d$ is a distance matrix and `doc.labels` contains the document labels
+(for color-coding) then we can use the following function:
+```{r eval=FALSE}
+mds(d, doc.labels)
+```
+This will open a window for the plot. Using the menu, select Windows -> Tile to arrange the sub-
+windows. You can also do multidimensional scaling with three dimensions instead of two, so that
+distances can be represented more accurately.
+mds(d,doc.labels,k=3)
+This gives a 3D scene that you can rotate with the mouse.

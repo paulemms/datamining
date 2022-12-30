@@ -13,9 +13,9 @@ plot_hclust_trace(h, k = 1:10)
 }
 \value{
 The trace shows, for each merge, the
-  distance of the clusters which were merged.  This is useful for determining
-  the appropriate number of clusters.  An interesting number of clusters is one
-  that directly precedes a sudden jump in distance.
+distance of the clusters which were merged.  This is useful for determining
+the appropriate number of clusters.  An interesting number of clusters is one
+that directly precedes a sudden jump in distance.
 }
 \description{
 Plots the cost of successive merges in a hierarchical clustering

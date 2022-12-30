@@ -14,7 +14,7 @@ to play the role of a column of \code{x}. Default: Last column.}
 }
 \value{
 A reordered version of \code{x} where the values in column \code{f} are in
-  ascending order.
+ascending order.
 }
 \description{
 Re-orders data frame rows so that a column is sorted.

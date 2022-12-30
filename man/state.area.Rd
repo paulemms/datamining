@@ -8,15 +8,15 @@ U.S. state area 1990
 }
 \details{
 \code{state.area} is a named vector of the 1990 U.S. state land areas,
-  including the District of Columbia, in square miles.
-  The numbers are more accurate and up-to-date than the ones in
-  \code{data(state)}.
+including the District of Columbia, in square miles.
+The numbers are more accurate and up-to-date than the ones in
+\code{data(state)}.
 }
 \references{
 The data was obtained from
-  \url{http://www.census.gov/population/censusdata/90den_stco.txt}
-  and edited into R format.
-  County areas can also be obtained from the above link.
+\url{http://www.census.gov/population/censusdata/90den_stco.txt}
+and edited into R format.
+County areas can also be obtained from the above link.
 }
 \seealso{
 \code{\link{state.pop}}, \code{\link{state}}

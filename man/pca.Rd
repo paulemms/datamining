@@ -13,22 +13,22 @@ pca(x, k = 1, ...)
 }
 \value{
 A matrix with named rows matching the numeric columns of \code{x} and
-  columns named \code{h1}, ..., \code{hk}.
-  Each column denotes a new dimension to be obtained as a linear combination
-  of the numeric variables in \code{x}.
+columns named \code{h1}, ..., \code{hk}.
+Each column denotes a new dimension to be obtained as a linear combination
+of the numeric variables in \code{x}.
 }
 \description{
 Computes a projection matrix that preserves spread.
 }
 \details{
 The projection is chosen so that the projected data is as "spread out"
-  as possible, measured according to the determinant of the covariance
-  matrix.
-  This turns out to be the top \code{k} eigenvectors of the data
-  covariance matrix.
+as possible, measured according to the determinant of the covariance
+matrix.
+This turns out to be the top \code{k} eigenvectors of the data
+covariance matrix.
 
-  The projection is "stabilized" so that small changes in the data do
-  not cause sign flips in the projection.
+The projection is "stabilized" so that small changes in the data do
+not cause sign flips in the projection.
 }
 \examples{
 data(Housing)
@@ -39,7 +39,7 @@ plot_axes(w)
 }
 \seealso{
 \code{\link{project}}, \code{\link{projection}},
-  \code{pca} in the \code{multiv} package
+\code{pca} in the \code{multiv} package
 }
 \author{
 Tom Minka

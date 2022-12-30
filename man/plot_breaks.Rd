@@ -11,15 +11,15 @@ plot_breaks(b)
 }
 \value{
 Uses \code{\link{segments}} to draw thick blue vertical lines on top
-  of the current plot, at the given locations.
+of the current plot, at the given locations.
 }
 \description{
 Draws lines to indicate break locations.
 }
 \seealso{
 \code{\link{plot.hclust.breaks}},
-  \code{\link{plot.segments.ts}},
-  \code{\link{break_kmeans}}
+\code{\link{plot.segments.ts}},
+\code{\link{break_kmeans}}
 }
 \author{
 Tom Minka

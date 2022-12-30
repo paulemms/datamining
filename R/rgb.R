@@ -553,9 +553,9 @@ rep.row <- function(x,n) {
   t(rep.col(x,n))
 }
 
-eye <- function(n) {
-  diag(n)
-}
+# eye <- function(n) {
+#   diag(n)
+# }
 norm <- function(x) {
   sqrt(sum(x^2))
 }

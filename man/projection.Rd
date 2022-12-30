@@ -12,7 +12,7 @@ projection(x, y = NULL, k = 1, type = c("mv", "m", "v", "nn"), ...)
 \item{y}{a factor or numeric vector which defines the groups to separate.
 If \code{y} is not given, it is
 taken to be the response variable of \code{x} (the last column if
-                                               \code{x} is not a \code{model.frame}).}
+\code{x} is not a \code{model.frame}).}
 
 \item{k}{the number of dimensions to project \code{x} down to.}
 
@@ -25,37 +25,37 @@ will be orthogonal to \code{given}.}
 }
 \value{
 A matrix suitable for input to \code{\link{project}},
-  with named rows matching columns of \code{x} and
-  columns named \code{h1}, ..., \code{hk}.
-  Each column denotes a new dimension to be obtained as a linear combination
-  of the variables in \code{x}.
+with named rows matching columns of \code{x} and
+columns named \code{h1}, ..., \code{hk}.
+Each column denotes a new dimension to be obtained as a linear combination
+of the variables in \code{x}.
 }
 \description{
 Finds a projection matrix that separates data groups.
 }
 \details{
 This function only uses the second-order statistics of the data (means
-                                                                   and covariances of the groups).
+and covariances of the groups).
 
-  If \code{type="m"}, the within-group covariances are assumed equal
-  and the projection will try to separate the projected means.
+If \code{type="m"}, the within-group covariances are assumed equal
+and the projection will try to separate the projected means.
 
-  If \code{type="v"}, the within-group means are assumed equal
-  and the projection will try to separate the projected covariances.
+If \code{type="v"}, the within-group means are assumed equal
+and the projection will try to separate the projected covariances.
 
-  If \code{type="mv"}, the projection will try to separate the projected
-  means and covariances, by maximizing the divergence between the
-  projected classes (as Gaussians).
+If \code{type="mv"}, the projection will try to separate the projected
+means and covariances, by maximizing the divergence between the
+projected classes (as Gaussians).
 
-  If \code{y} is a numeric vector, overlapping classes are defined by
-  grouping data points with similar values of \code{y}.
-  The optional argument \code{span} controls how big the classes will
-  be (as a percentage of the dataset), and \code{res} controls the
-  amount of overlap.  The total number of classes will be
-  \code{res}/\code{span}.  The default values are usually acceptable.
+If \code{y} is a numeric vector, overlapping classes are defined by
+grouping data points with similar values of \code{y}.
+The optional argument \code{span} controls how big the classes will
+be (as a percentage of the dataset), and \code{res} controls the
+amount of overlap.  The total number of classes will be
+\code{res}/\code{span}.  The default values are usually acceptable.
 
-  The projection is "stabilized" so that small changes in the data do
-  not cause sign flips in the projection.
+The projection is "stabilized" so that small changes in the data do
+not cause sign flips in the projection.
 }
 \examples{
 # illustrate difference between (m,v,mv)
@@ -91,19 +91,19 @@ abline(0,w[2]/w[1],col=4)
 }
 \references{
 m-projection is Fisher's linear discriminant analysis.
-  mv-projection is heteroscedastic discriminant analysis:
+mv-projection is heteroscedastic discriminant analysis:
 
-  N. Kumar and A.G. Andreou.
-  Heteroscedastic discriminant analysis and
-  reduced rank HMMs for improved speech recognition.
-  \emph{Speech Communication} 26: 283-297, 1998.
+N. Kumar and A.G. Andreou.
+Heteroscedastic discriminant analysis and
+reduced rank HMMs for improved speech recognition.
+\emph{Speech Communication} 26: 283-297, 1998.
 
-  The case when \code{y} is numeric is sliced inverse
-  regression:
+The case when \code{y} is numeric is sliced inverse
+regression:
 
-  K.-C. Li.  Sliced inverse regression for dimension reduction.
-  \emph{Journal of the American Statistical Association} 86(414):
-  316-327, 1991.
+K.-C. Li.  Sliced inverse regression for dimension reduction.
+\emph{Journal of the American Statistical Association} 86(414):
+316-327, 1991.
 }
 \seealso{
 \code{\link{project}},\code{\link{pca}}

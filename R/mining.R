@@ -826,7 +826,7 @@ kernel.kmeans <- function(x,k=2,s=1) {
   s = s*sqrt(mean(diag(cov(x))))
   d = d/s
   x2 <- exp(-d)
-  x2 = div.by.sum(x2)
+  x2 = div_by_sum(x2)
   x2 = as.data.frame(x2)
   hc <- hclust(dist(x2)^2,method="ward")
   f <- factor(cutree(hc,k=k))

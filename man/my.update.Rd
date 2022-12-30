@@ -4,7 +4,7 @@
 \alias{my.update}
 \title{#' @export
 terms.table <- function(x,...) {
-  terms.data.frame(as.data.frame(x),...)
+terms.data.frame(as.data.frame(x),...)
 }}
 \usage{
 my.update(object, formula., ..., evaluate = TRUE)
@@ -13,26 +13,7 @@ my.update(object, formula., ..., evaluate = TRUE)
 #' @export
 formula <- function(...) UseMethod("formula")
 }
-\details{
-#' @export
-formula.default <- function(x,env=parent.frame(), ...)
-{
-  if (!is.null(x$formula))		eval(x$formula)
-  else if (!is.null(x$call$formula))	eval(x$call$formula)
-  # minka: always return formula, not terms
-  else if (!is.null(x$terms))		formula.terms(x$terms)
-  else if (!is.null(attr(x, "formula"))) attr(x, "formula")
-  else {form<-switch(mode(x),
-                     NULL = structure(NULL, class = "formula"),
-                     character = formula(eval(parse(text = x)[[1]])),
-                     call = eval(x), stop("invalid formula"))
-  environment(form)<-env
-  form
-  }
+\section{minka: always return formula, not terms}{
+
 }
 
-#' @export
-formula.data.frame <- function(x,env=parent.frame(),...) {
-  formula(terms(x,env=env),...)
-}
-}

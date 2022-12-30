@@ -24,7 +24,7 @@ Read data into an array from the console or file
 }
 \details{
 The array can have one of several formats.  The preferred format,
-  produced by \code{\link{write.array}}, looks like \code{
+produced by \code{\link{write.array}}, looks like \code{
     cvar.nam
     rvar.1.nam   ... rvar.k.nam    cvar.lev.1 ... cvar.lev.l
     rvar.1.lev.1 ... rvar.k.lev.1  ...        ... ...

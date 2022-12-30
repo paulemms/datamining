@@ -44,12 +44,11 @@ sort.data.frame <- function(x, decreasing=FALSE, f=ncol(x), ...) {
 #'
 #' Sort the cells of an array
 #' @param x an array
-#' @details Converts \code{x} to a data frame and calls
+#' @details Converts `x` to a data frame and calls
 #'   \code{\link{sort.data.frame}}.
-#' @return A data frame representation of \code{x}, sorted by cell value.
+#' @return A data frame representation of `x`, sorted by cell value.
 #' @author Tom Minka
-#' @seealso
-#'   \code{\link{sort.data.frame}}
+#' @seealso [sort.data.frame()]
 #' @examples
 #' data(Titanic)
 #' sort_cells(Titanic)

@@ -34,28 +34,28 @@ Produces a hierarchical clustering of one-dimensional data via Ward's method.
 }
 \details{
 Repeatedly merges clusters in order to minimize the clustering cost.
-  By default, it is the same as \code{hclust(method="ward")}.
-  If \code{same.var=T}, the cost is the sum of squares:
-    \deqn{sum_c sum_{i in c} (x_i - m_c)^2}
-  The incremental cost of merging clusters ca and cb is
-  \deqn{(n_a*n_b)/(n_a+n_b)*(m_a - m_b)^2}
-  It prefers to merge clusters which are small and have similar means.
+By default, it is the same as \code{hclust(method="ward")}.
+If \code{same.var=T}, the cost is the sum of squares:
+\deqn{sum_c sum_{i in c} (x_i - m_c)^2}
+The incremental cost of merging clusters ca and cb is
+\deqn{(n_a*n_b)/(n_a+n_b)*(m_a - m_b)^2}
+It prefers to merge clusters which are small and have similar means.
 
-  If \code{same.var=F}, the cost is the sum of log-variances:
-    \deqn{sum_c n_c*log(1/n_c*sum_{i in c} (x_i - m_c)^2)}
-  It prefers to merge clusters which are small, have similar means,
-  and have similar variances.
+If \code{same.var=F}, the cost is the sum of log-variances:
+\deqn{sum_c n_c*log(1/n_c*sum_{i in c} (x_i - m_c)^2)}
+It prefers to merge clusters which are small, have similar means,
+and have similar variances.
 
-  If \code{x} is a list of vectors, each vector is assumed to be a
-  cluster.  \code{n} and \code{s} are computed for each cluster and
-  \code{x} is replaced by the cluster means.
-  Thus you can say \code{ward(split(x,f))} to cluster the data for different
-  factors.
+If \code{x} is a list of vectors, each vector is assumed to be a
+cluster.  \code{n} and \code{s} are computed for each cluster and
+\code{x} is replaced by the cluster means.
+Thus you can say \code{ward(split(x,f))} to cluster the data for different
+factors.
 }
 \section{Bugs}{
  Because of the adjacency constraint used in implementation,
-  the clustering that results
-  from \code{sortx=T} and \code{same.var=F} may occasionally be suboptimal.
+the clustering that results
+from \code{sortx=T} and \code{same.var=F} may occasionally be suboptimal.
 }
 
 \examples{
@@ -90,12 +90,12 @@ boxplot(hc,split(x,f))
 }
 \seealso{
 \code{\link{hclust}},
-  \code{\link{plot_hclust_trace}},
-  \code{\link{hist.hclust}},
-  \code{\link{boxplot.hclust}},
-  \code{\link{break_ward}},
-  \code{\link{break.ts}},
-  \code{\link{merge_factor}}
+\code{\link{plot_hclust_trace}},
+\code{\link{hist.hclust}},
+\code{\link{boxplot.hclust}},
+\code{\link{break_ward}},
+\code{\link{break.ts}},
+\code{\link{merge_factor}}
 }
 \author{
 Tom Minka

@@ -33,7 +33,7 @@ Merges similar rows and columns of a contingency table.
 }
 \details{
 The desired table dimensions are achieved by successively merging the two
-most similar slices. (`Slice' generalizes `row' and `column' to
+most similar slices. (\verb{Slice' generalizes }row' and `column' to
 higher-dimensional tables.) The distance between slices is measured
 according to the chi-square statistic. Merging two slices means adding
 together their counts, and concatenating their labels with a comma in
