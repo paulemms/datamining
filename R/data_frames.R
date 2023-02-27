@@ -42,7 +42,7 @@ sort.data.frame <- function(x, decreasing=FALSE, f=ncol(x), ...) {
 
 #' Sort an array
 #'
-#' Sort the cells of an array
+#' Sort the cells of an array.
 #' @param x an array
 #' @details Converts `x` to a data frame and calls
 #'   \code{\link{sort.data.frame}}.
